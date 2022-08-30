@@ -41,20 +41,15 @@ end
 -- @return cmd
 -- @return runtime_path
 local function determine_rspec_cmd()
-  local cmd = "rspec"
-  local cmd_exec_path = vim.fn.getcwd()
-
   for _, path in pairs(get_ancestor_paths()) do
     if has_file(path, "bin/rspec") then
-      cmd = "bin/rspec"
-      cmd_exec_path = path
+      return "bin/rspec", path
     elseif has_file(path, "Gemfile") then
-      cmd = "bundle exec rspec"
-      cmd_exec_path = path
+      return "bundle exec rspec", path
     end
   end
 
-  return cmd, cmd_exec_path
+  return "rspec", vim.fn.getcwd()
 end
 
 function M.run_file()
