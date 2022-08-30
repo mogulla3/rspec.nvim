@@ -29,17 +29,17 @@ local function has_file(path, filename)
 end
 
 -- Determine the rspec command in the following order of priority.
--- 1. bin/rspec
--- 2. bundle exec rspec
--- 3. rspec
+-- * bin/rspec
+-- * bundle exec rspec
+-- * rspec
 --
 -- In addition, the selected rspec command also determines the runtime path.
--- * bin/rspec -> Path where bin/rspec is found. Typically the root directory of the Rails app.
--- * bundle exec rspec -> Path where Gemfile was found
+-- * bin/rspec -> Path where bin/rspec is located. Typically the root directory of the Rails app.
+-- * bundle exec rspec -> Path where Gemfile is located.
 -- * rspec -> current working directory
 --
 -- @return cmd
--- @return working_dir
+-- @return runtime_path
 local function determine_rspec_cmd()
   local cmd = "rspec"
   local cmd_exec_path = vim.fn.getcwd()
