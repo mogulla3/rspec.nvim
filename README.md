@@ -19,13 +19,13 @@ TODO
 
 - About running rspec
   - [x] Run rspec to file (current buffer).
-  - [ ] Run rspec to close to the cursor potision.
+  - [x] Run rspec to close to the cursor potision.
   - [ ] Run rspec to last test run.
   - [ ] Run rspec with the `--only-failures` option.
 - About rspec commands at runtime
-  - [ ] Move the current directory to a nice place and run it.
+  - [x] Move the current directory to a nice place and run it.
     - Since `rspec` can only be run from project root.
-  - [ ] rspec in the following order of priority
+  - [x] rspec in the following order of priority
     - `bin/rspec` -> `bundle exec rspec` -> `rspec` (global)
 - About the results of the test
   - [ ] Failed tests are thrown into quickfix.
