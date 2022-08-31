@@ -72,8 +72,28 @@ function M.run_current_spec_file()
   term = vim.api.nvim_get_current_buf()
 end
 
+-- TODO: Fix duplicated codes..
+function M.run_nearest_spec()
+  if vim.fn.bufexists(term) > 0 then
+    vim.api.nvim_buf_delete(term, { force = true })
+  end
+
+  local bufnr = vim.api.nvim_get_current_buf()
+  local bufname = vim.api.nvim_buf_get_name(bufnr)
+  local rspec_cmd, cmd_exec_path = determine_rspec_cmd()
+  local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
+
+  vim.cmd("botright vsplit new")
+  local cmd = rspec_cmd .. " " .. bufname .. ":" .. current_line_number
+
+  vim.fn.termopen(cmd, { cwd = cmd_exec_path })
+  vim.cmd("startinsert")
+  term = vim.api.nvim_get_current_buf()
+end
+
 function M.setup()
   vim.cmd "command! RunCurrentSpecFile lua require('rspec').run_current_spec_file()<CR>"
+  vim.cmd "command! RunNearestSpec lua require('rspec').run_nearest_spec()<CR>"
 end
 
 return M
