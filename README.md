@@ -6,10 +6,19 @@ Test Runner for RSpec.
 
 TODO
 
+## Commands
+
+|Command|Description|
+|:--|:--|
+|`:RunCurrentSpecFile`|Run rspec on the current file.|
+|`:RunNearestSpec`|Run rspec on the test nearest to the current cursor position.|
+|`:RunLastSpec`|WIP|
+|`:RunLastFailedSpec`|Run rspec on the current file with `--only-failures` option.|
+
 ## TODOs
 
 - About running rspec
-  - [ ] Run rspec to file (current buffer).
+  - [x] Run rspec to file (current buffer).
   - [ ] Run rspec to close to the cursor potision.
   - [ ] Run rspec to last test run.
   - [ ] Run rspec with the `--only-failures` option.
@@ -26,7 +35,7 @@ TODO
   - [ ] Consider the case where `rspec` is not installed.
 - About docs
   - [ ] write docs
-- Other
+- Others
   - [ ] Working with dispatch.vim
   - [ ] If focused spec is found, display it in the message.
   - [ ] Allow users to change above behaviors in settings.

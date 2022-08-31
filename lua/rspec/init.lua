@@ -52,7 +52,7 @@ local function determine_rspec_cmd()
   return "rspec", vim.fn.getcwd()
 end
 
-function M.run_file()
+function M.run_current_spec_file()
   if vim.fn.bufexists(term) > 0 then
     vim.api.nvim_buf_delete(term, { force = true })
   end
@@ -73,7 +73,7 @@ function M.run_file()
 end
 
 function M.setup()
-  vim.cmd "command! RSpecFile lua require('rspec').run_file()<CR>"
+  vim.cmd "command! RunCurrentSpecFile lua require('rspec').run_current_spec_file()<CR>"
 end
 
 return M
