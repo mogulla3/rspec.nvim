@@ -52,6 +52,13 @@ local function determine_rspec_cmd()
   return "rspec", vim.fn.getcwd()
 end
 
+local function save_last_command(cmd, exec_path)
+  vim.g.last_command = {
+    cmd = cmd,
+    exec_path = exec_path,
+  }
+end
+
 function M.run_current_spec_file()
   if vim.fn.bufexists(term) > 0 then
     vim.api.nvim_buf_delete(term, { force = true })
@@ -65,6 +72,9 @@ function M.run_current_spec_file()
   vim.cmd("botright vsplit new")
   vim.fn.termopen(cmd, { cwd = cmd_exec_path })
   vim.cmd("startinsert")
+
+  save_last_command(cmd, cmd_exec_path)
+
   term = vim.api.nvim_get_current_buf()
 end
 
@@ -89,9 +99,27 @@ function M.run_nearest_spec()
   term = vim.api.nvim_get_current_buf()
 end
 
+-- TODO: Fix duplicated codes..
+function M.run_last_spec()
+  local last_command = vim.g.last_command
+
+  if last_command then
+    vim.cmd("botright vsplit new")
+    vim.fn.termopen(last_command.cmd, { cwd = last_command.exec_path })
+    vim.cmd("startinsert")
+    term = vim.api.nvim_get_current_buf()
+  else
+    vim.notify("last command not found", vim.log.levels.WARN)
+  end
+end
+
 function M.setup()
+  -- For the purpose of storing the last rspec command
+  vim.g.last_command = nil
+
   vim.cmd "command! RunCurrentSpecFile lua require('rspec').run_current_spec_file()<CR>"
   vim.cmd "command! RunNearestSpec lua require('rspec').run_nearest_spec()<CR>"
+  vim.cmd "command! RunLastSpec lua require('rspec').run_last_spec()<CR>"
 end
 
 return M
