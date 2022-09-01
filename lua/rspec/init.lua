@@ -60,13 +60,9 @@ function M.run_current_spec_file()
   local bufnr = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
   local rspec_cmd, cmd_exec_path = determine_rspec_cmd()
-
-  vim.cmd("botright vsplit new")
   local cmd = rspec_cmd .. " " .. bufname
 
-  vim.notify("cmd = " .. cmd, vim.log.levels.DEBUG)
-  vim.notify("cmd_exec_path = " .. cmd_exec_path, vim.log.levels.DEBUG)
-
+  vim.cmd("botright vsplit new")
   vim.fn.termopen(cmd, { cwd = cmd_exec_path })
   vim.cmd("startinsert")
   term = vim.api.nvim_get_current_buf()
@@ -82,12 +78,14 @@ function M.run_nearest_spec()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
   local rspec_cmd, cmd_exec_path = determine_rspec_cmd()
   local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
-
-  vim.cmd("botright vsplit new")
   local cmd = rspec_cmd .. " " .. bufname .. ":" .. current_line_number
 
+  vim.cmd("botright vsplit new")
   vim.fn.termopen(cmd, { cwd = cmd_exec_path })
   vim.cmd("startinsert")
+
+  save_last_command(cmd, cmd_exec_path)
+
   term = vim.api.nvim_get_current_buf()
 end
 
