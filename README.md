@@ -41,3 +41,4 @@ TODO
   - [ ] Allow users to change above behaviors in settings.
   - [ ] Debug output can be enabled in the settings.
   - [ ] Other rspec-specific features that may be useful may be implemented.
+  - [ ] Allow command line options to be passed freely.
