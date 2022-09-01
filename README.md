@@ -12,7 +12,7 @@ TODO
 |:--|:--|
 |`:RunCurrentSpecFile`|Run rspec on the current file.|
 |`:RunNearestSpec`|Run rspec on the test nearest to the current cursor position.|
-|`:RunLastSpec`|WIP|
+|`:RunLastSpec`|Re-run rspec with the last command executed.|
 |`:RunLastFailedSpec`|Run rspec on the current file with `--only-failures` option.|
 
 ## TODOs
