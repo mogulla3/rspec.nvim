@@ -40,7 +40,7 @@ end
 --
 -- @return cmd
 -- @return runtime_path
-local function determine_rspec_cmd()
+local function determine_rspec_cmd_and_runtime_path()
   for _, path in pairs(get_ancestor_paths()) do
     if has_file(path, "bin/rspec") then
       return "bin/rspec", path
@@ -52,10 +52,10 @@ local function determine_rspec_cmd()
   return "rspec", vim.fn.getcwd()
 end
 
-local function save_last_command(cmd, exec_path)
+local function save_last_command(cmd, runtime_path)
   vim.g.last_command = {
     cmd = cmd,
-    exec_path = exec_path,
+    runtime_path = runtime_path,
   }
 end
 
@@ -66,14 +66,14 @@ function M.run_current_spec_file()
 
   local bufnr = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
-  local rspec_cmd, cmd_exec_path = determine_rspec_cmd()
+  local rspec_cmd, runtime_path = determine_rspec_cmd_and_runtime_path()
   local cmd = rspec_cmd .. " " .. bufname
 
   vim.cmd("botright vsplit new")
-  vim.fn.termopen(cmd, { cwd = cmd_exec_path })
+  vim.fn.termopen(cmd, { cwd = runtime_path })
   vim.cmd("startinsert")
 
-  save_last_command(cmd, cmd_exec_path)
+  save_last_command(cmd, runtime_path)
 
   term = vim.api.nvim_get_current_buf()
 end
@@ -86,15 +86,15 @@ function M.run_nearest_spec()
 
   local bufnr = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
-  local rspec_cmd, cmd_exec_path = determine_rspec_cmd()
+  local rspec_cmd, runtime_path = determine_rspec_cmd_and_runtime_path()
   local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
   local cmd = rspec_cmd .. " " .. bufname .. ":" .. current_line_number
 
   vim.cmd("botright vsplit new")
-  vim.fn.termopen(cmd, { cwd = cmd_exec_path })
+  vim.fn.termopen(cmd, { cwd = runtime_path })
   vim.cmd("startinsert")
 
-  save_last_command(cmd, cmd_exec_path)
+  save_last_command(cmd, runtime_path)
 
   term = vim.api.nvim_get_current_buf()
 end
@@ -105,7 +105,7 @@ function M.run_last_spec()
 
   if last_command then
     vim.cmd("botright vsplit new")
-    vim.fn.termopen(last_command.cmd, { cwd = last_command.exec_path })
+    vim.fn.termopen(last_command.cmd, { cwd = last_command.runtime_path })
     vim.cmd("startinsert")
     term = vim.api.nvim_get_current_buf()
   else
