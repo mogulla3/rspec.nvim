@@ -52,11 +52,38 @@ local function determine_rspec_cmd_and_runtime_path()
   return "rspec", vim.fn.getcwd()
 end
 
-local function save_last_command(cmd, runtime_path)
+local function save_last_command(command, runtime_path)
   vim.g.last_command = {
-    cmd = cmd,
+    command = command,
     runtime_path = runtime_path,
   }
+end
+
+-- TODO: Change to a better method name OR split the method
+-- @param only_nearest
+local function build_commands(only_nearest)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local bufname = vim.api.nvim_buf_get_name(bufnr)
+  local rspec_cmd, runtime_path = determine_rspec_cmd_and_runtime_path()
+  local last_failed_test_path = vim.fn.stdpath("data") .. "/" .. "rspec_last_failed_examples"
+
+  if only_nearest then
+    local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
+    bufname = bufname .. ":" .. current_line_number
+  end
+
+  local command = table.concat({
+    rspec_cmd,
+    bufname,
+    '--format',
+    'documentation',
+    '--format',
+    'failures',
+    '--out',
+    last_failed_test_path,
+  }, ' ')
+
+  return command, runtime_path
 end
 
 function M.run_current_spec_file()
@@ -64,16 +91,13 @@ function M.run_current_spec_file()
     vim.api.nvim_buf_delete(term, { force = true })
   end
 
-  local bufnr = vim.api.nvim_get_current_buf()
-  local bufname = vim.api.nvim_buf_get_name(bufnr)
-  local rspec_cmd, runtime_path = determine_rspec_cmd_and_runtime_path()
-  local cmd = rspec_cmd .. " " .. bufname
+  command, runtime_path = build_commands()
 
   vim.cmd("botright vsplit new")
-  vim.fn.termopen(cmd, { cwd = runtime_path })
+  vim.fn.termopen(command, { cwd = runtime_path })
   vim.cmd("startinsert")
 
-  save_last_command(cmd, runtime_path)
+  save_last_command(command, runtime_path)
 
   term = vim.api.nvim_get_current_buf()
 end
@@ -84,17 +108,13 @@ function M.run_nearest_spec()
     vim.api.nvim_buf_delete(term, { force = true })
   end
 
-  local bufnr = vim.api.nvim_get_current_buf()
-  local bufname = vim.api.nvim_buf_get_name(bufnr)
-  local rspec_cmd, runtime_path = determine_rspec_cmd_and_runtime_path()
-  local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
-  local cmd = rspec_cmd .. " " .. bufname .. ":" .. current_line_number
+  command, runtime_path = build_commands(true)
 
   vim.cmd("botright vsplit new")
-  vim.fn.termopen(cmd, { cwd = runtime_path })
+  vim.fn.termopen(command, { cwd = runtime_path })
   vim.cmd("startinsert")
 
-  save_last_command(cmd, runtime_path)
+  save_last_command(command, runtime_path)
 
   term = vim.api.nvim_get_current_buf()
 end
@@ -105,7 +125,7 @@ function M.run_last_spec()
 
   if last_command then
     vim.cmd("botright vsplit new")
-    vim.fn.termopen(last_command.cmd, { cwd = last_command.runtime_path })
+    vim.fn.termopen(last_command.command, { cwd = last_command.runtime_path })
     vim.cmd("startinsert")
     term = vim.api.nvim_get_current_buf()
   else
