@@ -1,32 +1,6 @@
+local utils = require "rspec.utils"
 local M = {}
 local term = nil
-
--- Returns list of ancestor paths from current working directory.
--- The return value does not include the root path ("/").
--- Each path does not have a trailing slash.
---
--- @example { "/foo/bar/baz", "/foo/bar", "/foo" }
--- @return a table of paths
-local function get_ancestor_paths()
-  local ancestor_paths = {}
-  local current_path = vim.fn.getcwd()
-
-  repeat
-    table.insert(ancestor_paths, current_path)
-    current_path = vim.fn.fnamemodify(current_path, ':h')
-  until current_path == '/'
-
-  return ancestor_paths
-end
-
--- Returns whether or not `filename` exists in `path`
---
--- @param path
--- @param filename
--- @return boolean
-local function has_file(path, filename)
-  return vim.fn.filereadable(path .. "/" .. filename) == 1
-end
 
 -- Determine the rspec command in the following order of priority.
 -- * bin/rspec
@@ -41,10 +15,10 @@ end
 -- @return cmd
 -- @return runtime_path
 local function determine_rspec_cmd_and_runtime_path()
-  for _, path in pairs(get_ancestor_paths()) do
-    if has_file(path, "bin/rspec") then
+  for _, path in pairs(utils.get_ancestor_paths()) do
+    if utils.has_file(path, "bin/rspec") then
       return "bin/rspec", path
-    elseif has_file(path, "Gemfile") then
+    elseif utils.has_file(path, "Gemfile") then
       return "bundle exec rspec", path
     end
   end
