@@ -1,6 +1,7 @@
 local utils = require "rspec.utils"
 local M = {}
 local term = nil
+local last_failed_test_path = vim.fn.stdpath("data") .. "/" .. "rspec_last_failed_examples"
 
 --- Determine the rspec command in the following order of priority.
 --- * bin/rspec
@@ -44,7 +45,6 @@ local function build_commands(opts)
   local bufnr = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
   local rspec_cmd, runtime_path = determine_rspec_cmd_and_runtime_path()
-  local last_failed_test_path = vim.fn.stdpath("data") .. "/" .. "rspec_last_failed_examples"
 
   if opts.only_nearest then
     local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
@@ -70,9 +70,38 @@ end
 ---@param command string
 ---@param runtime_path string
 local function run_rspec(command, runtime_path)
+  vim.api.nvim_command("cclose")
+
+  -- TODO: Allow customizable size and position
   vim.cmd("botright vsplit new")
-  vim.fn.termopen(command, { cwd = runtime_path })
+
+  -- To close the terminal by pressing any key
   vim.cmd("startinsert")
+
+  vim.fn.termopen(command, {
+    cwd = runtime_path,
+    -- see: help :on_exit
+    on_exit = function(_job_id, exit_code, _event)
+      -- TODO: failしたexampleがあった場合、元のwindowでquickfixを開きたいのですぐquit
+      -- もっと良いやり方がありそう
+      vim.api.nvim_command("quit")
+
+      if exit_code == 0 then
+        vim.api.nvim_echo({{'spec passed', 'RSpecPassed'}}, true, {})
+      else
+        vim.api.nvim_echo({{'spec failed', 'RSpecFailed'}}, true, {})
+
+        -- In the case of errors prior to running RSpec, such as SyntaxError, nothing is written to the file.
+        -- Therefore, the file size is used for verification.
+        if vim.fn.getfsize(last_failed_test_path) > 0 then
+          local failed_examples = vim.fn.readfile(last_failed_test_path)
+          failed_examples = vim.list_extend({ "Failed examples are as follows." }, failed_examples)
+          vim.fn.setqflist({}, "r", { efm = "%f:%l:%m", lines = failed_examples })
+          vim.api.nvim_command("copen")
+        end
+      end
+    end,
+  })
 end
 
 function M.run_current_spec_file()
@@ -113,6 +142,9 @@ end
 function M.setup()
   -- For the purpose of storing the last rspec command
   vim.g.last_command = nil
+
+  vim.api.nvim_set_hl(0, 'RSpecPassed', { default = true, link = 'DiffAdd' })
+  vim.api.nvim_set_hl(0, 'RSpecFailed', { default = true, link = 'DiffDelete' })
 
   vim.cmd "command! RunCurrentSpecFile lua require('rspec').run_current_spec_file()<CR>"
   vim.cmd "command! RunNearestSpec lua require('rspec').run_nearest_spec()<CR>"

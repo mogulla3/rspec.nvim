@@ -28,7 +28,7 @@ TODO
   - [x] rspec in the following order of priority
     - `bin/rspec` -> `bundle exec rspec` -> `rspec` (global)
 - About the results of the test
-  - [ ] Failed tests are thrown into quickfix.
+  - [x] Failed tests are thrown into quickfix.
   - [ ] The last test results can be viewed in a float window. (success or failure)
 - About error handling
   - [ ] Consider cases that do not match rspec filename format. (expected: `_spec.rb`)
@@ -36,7 +36,6 @@ TODO
 - About docs
   - [ ] write docs
 - Others
-  - [ ] Working with dispatch.vim
   - [ ] If focused spec is found, display it in the message.
   - [ ] Allow users to change above behaviors in settings.
   - [ ] Debug output can be enabled in the settings.
