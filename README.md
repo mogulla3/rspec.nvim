@@ -29,7 +29,7 @@ TODO
     - `bin/rspec` -> `bundle exec rspec` -> `rspec` (global)
 - About the results of the test
   - [x] Failed tests are thrown into quickfix.
-  - [ ] The last test results can be viewed in a float window. (success or failure)
+  - [@] The last test results can be viewed in a float window. (success or failure)
 - About error handling
   - [ ] Consider cases that do not match rspec filename format. (expected: `_spec.rb`)
   - [ ] Consider the case where `rspec` is not installed.

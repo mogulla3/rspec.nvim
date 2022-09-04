@@ -80,8 +80,16 @@ local function run_rspec(command, runtime_path)
 
   vim.fn.termopen(command, {
     cwd = runtime_path,
+    stdout_buffered = true,
+    stderr_buffered = true,
+    on_stdout = function(_, data, _)
+      vim.g.last_command_stdout = data
+    end,
+    on_stderr = function(_, data, _)
+      vim.g.last_command_stderr = data
+    end,
     -- see: help :on_exit
-    on_exit = function(_job_id, exit_code, _event)
+    on_exit = function(_, exit_code, _)
       -- TODO: failしたexampleがあった場合、元のwindowでquickfixを開きたいのですぐquit
       -- もっと良いやり方がありそう
       vim.api.nvim_command("quit")
@@ -142,6 +150,8 @@ end
 function M.setup()
   -- For the purpose of storing the last rspec command
   vim.g.last_command = nil
+  vim.g.last_command_stdout = nil
+  vim.g.last_command_stderr = nil
 
   vim.api.nvim_set_hl(0, 'RSpecPassed', { default = true, link = 'DiffAdd' })
   vim.api.nvim_set_hl(0, 'RSpecFailed', { default = true, link = 'DiffDelete' })
