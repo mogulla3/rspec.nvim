@@ -27,17 +27,26 @@ TODO
     - Since `rspec` can only be run from project root.
   - [x] rspec in the following order of priority
     - `bin/rspec` -> `bundle exec rspec` -> `rspec` (global)
+- About test execution
+  - [ ] (try) Run rspec as background job
+  - [ ] (try) Displaying progress in a floating window during test execution
+  - [ ] (try) When the test is completed, report the results in a floating window.
+  - [ ] (try) No other jobs are accepted while a test job is running.
+  - [ ] (try) If a failed test exists, register it with quickfix and automatically open it.
 - About the results of the test
   - [x] Failed tests are thrown into quickfix.
-  - [@] The last test results can be viewed in a float window. (success or failure)
+  - [x] The last test results can be viewed in a floating window. (success or failure)
+  - [ ] Color the last test result.
+  - [ ] When the cursor is hovered over a failed test, detailed information is displayed in a floating window.
 - About error handling
   - [ ] Consider cases that do not match rspec filename format. (expected: `_spec.rb`)
   - [ ] Consider the case where `rspec` is not installed.
 - About docs
-  - [ ] write docs
+  - [ ] Write docs.
+- About config
+  - [ ] Allow users to change above behaviors in settings.
+  - [ ] Allow command line options to be passed freely.
+  - [ ] Debug output can be enabled in the settings.
 - Others
   - [ ] If focused spec is found, display it in the message.
-  - [ ] Allow users to change above behaviors in settings.
-  - [ ] Debug output can be enabled in the settings.
-  - [ ] Other rspec-specific features that may be useful may be implemented.
-  - [ ] Allow command line options to be passed freely.
+  - [ ] Write tests.
