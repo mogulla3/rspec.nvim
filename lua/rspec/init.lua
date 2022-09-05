@@ -54,6 +54,7 @@ local function build_commands(opts)
   local command = table.concat({
     rspec_cmd,
     bufname,
+    '--no-color',
     '--format',
     'documentation',
     '--format',
@@ -83,10 +84,20 @@ local function run_rspec(command, runtime_path)
     stdout_buffered = true,
     stderr_buffered = true,
     on_stdout = function(_, data, _)
-      vim.g.last_command_stdout = data
+      local stdout_output = {}
+      for _, line in pairs(data) do
+        table.insert(stdout_output, vim.fn.substitute(line, "\r", "", ""))
+      end
+
+      vim.g.last_command_stdout = stdout_output
     end,
     on_stderr = function(_, data, _)
-      vim.g.last_command_stderr = data
+      local stderr_output = {}
+      for _, line in pairs(data) do
+        table.insert(stderr_output, vim.fn.substitute(line, "\r", "", ""))
+      end
+
+      vim.g.last_command_stderr = stderr_output
     end,
     -- see: help :on_exit
     on_exit = function(_, exit_code, _)
@@ -147,6 +158,36 @@ function M.run_last_spec()
   end
 end
 
+function M.show_last_spec_result()
+  local bufnr = vim.api.nvim_create_buf(false, true)
+
+  -- margin: 5 10
+  local win_width = vim.fn.winwidth(0)
+  local win_height = vim.fn.winheight(0)
+
+  local opts = {
+    relative = "editor",
+    row = 5,
+    col = 10,
+    width = win_width - 20,
+    height = win_height - 10,
+    style = "minimal",
+    border = "rounded",
+  }
+
+  local win_id = vim.api.nvim_open_win(bufnr, true, opts)
+  vim.api.nvim_win_set_buf(win_id, bufnr)
+  vim.api.nvim_win_set_option(win_id, "wrap", true)
+
+  if vim.g.last_command_stdout then
+    vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, vim.g.last_command_stdout)
+  else
+    vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, {"No specs have been run yet in this session."})
+  end
+
+  vim.api.nvim_win_set_option(win_id, 'winhl', 'Normal:ErrorFloat')
+end
+
 function M.setup()
   -- For the purpose of storing the last rspec command
   vim.g.last_command = nil
@@ -159,6 +200,7 @@ function M.setup()
   vim.cmd "command! RunCurrentSpecFile lua require('rspec').run_current_spec_file()<CR>"
   vim.cmd "command! RunNearestSpec lua require('rspec').run_nearest_spec()<CR>"
   vim.cmd "command! RunLastSpec lua require('rspec').run_last_spec()<CR>"
+  vim.cmd "command! ShowLastSpecResult lua require('rspec').show_last_spec_result()<CR>"
 end
 
 return M
