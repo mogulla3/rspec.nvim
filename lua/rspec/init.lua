@@ -1,7 +1,6 @@
 local utils = require "rspec.utils"
-local M = {}
-local term = nil
 local last_failed_test_path = vim.fn.stdpath("data") .. "/" .. "rspec_last_failed_examples"
+local M = {}
 
 --- Determine the rspec command in the following order of priority.
 --- * bin/rspec
@@ -29,7 +28,7 @@ end
 
 --- Save the last executed rspec command and runtime info.
 ---
----@param command string
+---@param command table
 ---@param runtime_path string
 local function save_last_command(command, runtime_path)
   vim.g.last_command = {
@@ -51,7 +50,7 @@ local function build_commands(opts)
     bufname = bufname .. ":" .. current_line_number
   end
 
-  local command = table.concat({
+  local command = {
     rspec_cmd,
     bufname,
     '--no-color',
@@ -61,25 +60,31 @@ local function build_commands(opts)
     'failures',
     '--out',
     last_failed_test_path,
-  }, ' ')
+  }
 
   return command, runtime_path
 end
 
+local function log(msg)
+  local log_path = vim.fn.stdpath("cache") .. "/" .. "rspec-nvim.log"
+  vim.fn.writefile({msg}, log_path, "a")
+end
+
 --- Run rspec command
 ---
----@param command string
+---@param command table
 ---@param runtime_path string
+---@return number
 local function run_rspec(command, runtime_path)
   vim.api.nvim_command("cclose")
 
-  -- TODO: Allow customizable size and position
-  vim.cmd("botright vsplit new")
+  log(vim.inspect(command))
+  log(vim.inspect(runtime_path))
 
-  -- To close the terminal by pressing any key
-  vim.cmd("startinsert")
-
-  vim.fn.termopen(command, {
+  -- job_id
+  --  0 -> invalid argument
+  -- -1 -> cmd is not executable
+  local job_id = vim.fn.jobstart(command, {
     cwd = runtime_path,
     stdout_buffered = true,
     stderr_buffered = true,
@@ -101,10 +106,6 @@ local function run_rspec(command, runtime_path)
     end,
     -- see: help :on_exit
     on_exit = function(_, exit_code, _)
-      -- TODO: failしたexampleがあった場合、元のwindowでquickfixを開きたいのですぐquit
-      -- もっと良いやり方がありそう
-      vim.api.nvim_command("quit")
-
       if exit_code == 0 then
         vim.api.nvim_echo({{'spec passed', 'RSpecPassed'}}, true, {})
       else
@@ -121,30 +122,32 @@ local function run_rspec(command, runtime_path)
       end
     end,
   })
+
+  local exit_code = nil
+  if job_id > 0 then
+    -- wait 30 seconds max
+    exit_code = vim.fn.jobwait({ job_id }, 30000)[1]
+  else
+    exit_code = -1
+  end
+
+  -- exit_code
+  -- -1 if the timeout was exceeded
+  -- -2 if the job was interrupted (by |CTRL-C|)
+  -- -3 if the job-id is invalid
+  return exit_code
 end
 
 function M.run_current_spec_file()
-  if vim.fn.bufexists(term) > 0 then
-    vim.api.nvim_buf_delete(term, { force = true })
-  end
-
   local command, runtime_path = build_commands({})
   run_rspec(command, runtime_path)
   save_last_command(command, runtime_path)
-
-  term = vim.api.nvim_get_current_buf()
 end
 
 function M.run_nearest_spec()
-  if vim.fn.bufexists(term) > 0 then
-    vim.api.nvim_buf_delete(term, { force = true })
-  end
-
   local command, runtime_path = build_commands({ only_nearest = true })
   run_rspec(command, runtime_path)
   save_last_command(command, runtime_path)
-
-  term = vim.api.nvim_get_current_buf()
 end
 
 function M.run_last_spec()
@@ -152,7 +155,6 @@ function M.run_last_spec()
 
   if last_command then
     run_rspec(last_command.command, last_command.runtime_path)
-    term = vim.api.nvim_get_current_buf()
   else
     vim.notify("last command not found", vim.log.levels.WARN)
   end
