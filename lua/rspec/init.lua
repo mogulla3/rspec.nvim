@@ -65,11 +65,6 @@ local function build_commands(opts)
   return command, runtime_path
 end
 
-local function log(msg)
-  local log_path = vim.fn.stdpath("cache") .. "/" .. "rspec-nvim.log"
-  vim.fn.writefile({msg}, log_path, "a")
-end
-
 --- Run rspec command
 ---
 ---@param command table
@@ -78,8 +73,8 @@ end
 local function run_rspec(command, runtime_path)
   vim.api.nvim_command("cclose")
 
-  log(vim.inspect(command))
-  log(vim.inspect(runtime_path))
+  utils.log(vim.inspect(command))
+  utils.log(vim.inspect(runtime_path))
 
   -- job_id
   --  0 -> invalid argument

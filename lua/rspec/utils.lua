@@ -29,4 +29,9 @@ function M.has_file(path, filename)
   return vim.fn.filereadable(path .. "/" .. filename) == 1
 end
 
+function M.log(msg)
+  local log_path = vim.fn.stdpath("cache") .. "/" .. "rspec-nvim.log"
+  vim.fn.writefile({msg}, log_path, "a")
+end
+
 return M
