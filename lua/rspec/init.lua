@@ -118,19 +118,11 @@ local function run_rspec(command, runtime_path)
     end,
   })
 
-  local exit_code = nil
-  if job_id > 0 then
-    -- wait 30 seconds max
-    exit_code = vim.fn.jobwait({ job_id }, 30000)[1]
-  else
-    exit_code = -1
+  if job_id < 1 then
+    vim.notify(string.format("command failed(%i)", job_id), vim.log.levels.ERROR)
   end
 
-  -- exit_code
-  -- -1 if the timeout was exceeded
-  -- -2 if the job was interrupted (by |CTRL-C|)
-  -- -3 if the job-id is invalid
-  return exit_code
+  return job_id
 end
 
 function M.run_current_spec_file()
