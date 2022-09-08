@@ -155,6 +155,7 @@ function M.run_last_spec()
   end
 end
 
+-- TODO: Consider already opened float window
 function M.show_last_spec_result()
   local bufnr = vim.api.nvim_create_buf(false, true)
 
