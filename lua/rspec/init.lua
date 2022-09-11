@@ -1,4 +1,5 @@
 local utils = require("rspec.utils")
+local config = require("rspec.config")
 local last_failed_test_path = vim.fn.stdpath("data") .. "/" .. "rspec_last_failed_examples"
 local M = {}
 
@@ -137,7 +138,10 @@ local function run_rspec(command, runtime_path)
           local failed_examples = vim.fn.readfile(last_failed_test_path)
           failed_examples = vim.list_extend({ "Failed examples are as follows." }, failed_examples)
           vim.fn.setqflist({}, "r", { efm = "%f:%l:%m", lines = failed_examples })
-          vim.api.nvim_command("copen")
+
+          if config.open_quickfix_when_spec_failed then
+            vim.api.nvim_command("copen")
+          end
         end
       end
     end,
@@ -154,10 +158,7 @@ end
 function M.run_current_spec(options)
   local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
 
-  -- TODO: Since rspec has no restrictions on file names to be tested,
-  --       the file formats that are allowed to be executed can be changed in the settings.
-  -- see: https://relishapp.com/rspec/rspec-core/v/3-11/docs/spec-files/arbitrary-file-suffix
-  if not vim.endswith(bufname, '_spec.rb') then
+  if not config.allowed_file_format(bufname) then
     vim.notify("Cannot run rspec because of an invalid file name.", vim.log.levels.WARN)
     return
   end
@@ -196,7 +197,7 @@ function M.show_last_spec_result()
     border = "rounded",
   }
 
-  local win_id = vim.api.nvim_open_win(bufnr, true, opts)
+  local win_id = vim.api.nvim_open_win(bufnr, config.focus_on_last_spec_result_window, opts)
   vim.api.nvim_win_set_buf(win_id, bufnr)
   vim.api.nvim_win_set_option(win_id, "wrap", true)
 
@@ -209,7 +210,11 @@ function M.show_last_spec_result()
   vim.api.nvim_win_set_option(win_id, 'winhl', 'Normal:ErrorFloat')
 end
 
-function M.setup()
+---@param user_config table
+function M.setup(user_config)
+  user_config = user_config or {}
+  config.setup(user_config)
+
   vim.g.last_command = nil
   vim.g.last_command_stdout = nil
   vim.g.last_command_stderr = nil
