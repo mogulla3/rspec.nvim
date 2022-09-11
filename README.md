@@ -37,8 +37,8 @@ TODO
 - About the results of the test
   - [x] Failed tests are thrown into quickfix.
   - [x] The last test results can be viewed in a floating window. (success or failure)
-  - [ ] Setup keymap on float window. (for easy to close)
-  - [ ] Show a single sentence summarizing the results of the test run on.
+  - [@] Setup keymap on float window. (for easy to close)
+  - [@] Show a single sentence summarizing the results of the test run on.
   - [ ] Color the last test result.
   - [ ] When the cursor is hovered over a failed test, detailed information is displayed in a floating window.
   - [ ] Show the sign of the test result on the editor
@@ -48,10 +48,9 @@ TODO
 - About docs
   - [ ] Write docs.
 - About config
-  - [@] Allow users to change above behaviors in settings.
+  - [x] Allow users to change above behaviors in settings.
   - [ ] Debug output can be enabled in the settings.
 - Others
-  - [ ] If focused spec is found, display it in the message.
   - [ ] Write tests.
   - [ ] checkhealth
   - [ ] stylua
