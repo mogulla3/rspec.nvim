@@ -13,20 +13,20 @@ local default_config = {
   -- Whether or not to open the quickfix window when the spec fails.
   open_quickfix_when_spec_failed = true,
 
-  -- "DEBUG(1)", "INFO(2)", "WARN(3)", "ERROR(4)"
-  log_level = 'DEBUG',
+  -- File path to save the last failed spec result.
+  last_failed_spec_path = vim.fn.stdpath("data") .. "/" .. "rspec_last_failed_spec",
 }
 
-local M = {}
+local Config = {}
 
-function M.setup(user_config)
+function Config.setup(user_config)
   config = vim.tbl_deep_extend("force", default_config, user_config)
 end
 
-setmetatable(M, {
+setmetatable(Config, {
   __index = function(_, key)
     return config[key]
   end,
 })
 
-return M
+return Config
