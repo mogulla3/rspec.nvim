@@ -42,12 +42,12 @@ TODO
   - [ ] When the cursor is hovered over a failed test, detailed information is displayed in a floating window.
   - [ ] Show the sign of the test result on the editor
 - About error handling
-  - [ ] Consider cases that do not match rspec filename format. (expected: `_spec.rb`)
+  - [x] Consider cases that do not match rspec filename format. (expected: `_spec.rb`)
   - [ ] Consider the case where `rspec` is not installed.
 - About docs
   - [ ] Write docs.
 - About config
-  - [x] Allow users to change above behaviors in settings.
+  - [ ] Allow users to change above behaviors in settings.
   - [ ] Allow command line options to be passed freely.
   - [ ] Debug output can be enabled in the settings.
 - Others
