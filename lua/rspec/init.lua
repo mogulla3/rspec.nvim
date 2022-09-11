@@ -12,9 +12,9 @@ local M = {}
 --- * bundle exec rspec -> Path where Gemfile is located.
 --- * rspec -> current working directory
 ---
----@return string
----@return string
-local function determine_rspec_cmd_and_runtime_path()
+---@return string: rspec command
+---@return string: runtime path to run rspec command
+local function determine_rspec_command_and_runtime_path()
   for _, path in pairs(utils.get_ancestor_paths()) do
     if utils.has_file(path, "bin/rspec") then
       return "bin/rspec", path
@@ -43,7 +43,7 @@ end
 local function build_commands(opts)
   local bufnr = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
-  local rspec_cmd, runtime_path = determine_rspec_cmd_and_runtime_path()
+  local rspec_cmd, runtime_path = determine_rspec_command_and_runtime_path()
 
   if opts.only_nearest then
     local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
@@ -66,7 +66,7 @@ end
 
 --- Open a window showing rspec progress
 ---
----@return number window id
+---@return number: window id
 local function open_progress_window()
   local bufnr = vim.api.nvim_create_buf(false, true)
   local win_width = vim.fn.winwidth(0)
