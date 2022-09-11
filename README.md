@@ -10,10 +10,11 @@ TODO
 
 |Command|Description|
 |:--|:--|
-|`:RunCurrentSpecFile`|Run rspec on the current file.|
-|`:RunNearestSpec`|Run rspec on the test nearest to the current cursor position.|
+|`:RunCurrentSpec`|Run rspec on the current file.|
+|`:RunNearestSpec`|Run rspec on the spec nearest to the current cursor position.|
+|`:RunFailedSpec`|Run rspec on the current file with `--only-failures` option.|
 |`:RunLastSpec`|Re-run rspec with the last command executed.|
-|`:RunLastFailedSpec`|Run rspec on the current file with `--only-failures` option.|
+|`:ShowLastSpecResult`|Show last spec result on floating window.|
 
 ## TODOs
 
