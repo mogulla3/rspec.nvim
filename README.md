@@ -32,11 +32,12 @@ TODO
   - [x] Run rspec as background job.
   - [x] Displaying progress in a floating window during test execution.
   - [x] If a failed test exists, register it with quickfix and automatically open it.
-  - ~When the test is completed, report the results in a floating window.~
+  - [x] ~When the test is completed, report the results in a floating window.~
   - [ ] No other jobs are accepted while a test job is running.
 - About the results of the test
   - [x] Failed tests are thrown into quickfix.
   - [x] The last test results can be viewed in a floating window. (success or failure)
+  - [ ] Show a single sentence summarizing the results of the test run on.
   - [ ] Color the last test result.
   - [ ] When the cursor is hovered over a failed test, detailed information is displayed in a floating window.
   - [ ] Show the sign of the test result on the editor
@@ -46,7 +47,7 @@ TODO
 - About docs
   - [ ] Write docs.
 - About config
-  - [@] Allow users to change above behaviors in settings.
+  - [x] Allow users to change above behaviors in settings.
   - [ ] Allow command line options to be passed freely.
   - [ ] Debug output can be enabled in the settings.
 - Others

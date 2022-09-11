@@ -39,10 +39,9 @@ end
 
 --- TODO: Change to a better method name OR split the method
 ---
+---@param bufname string: "/path/to/sample_spec.rb"
 ---@param options table
-local function build_commands(options)
-  local bufnr = vim.api.nvim_get_current_buf()
-  local bufname = vim.api.nvim_buf_get_name(bufnr)
+local function build_commands(bufname, options)
   local rspec_cmd, runtime_path = determine_rspec_command_and_runtime_path()
   local option_args = {
     '--format',
@@ -153,7 +152,18 @@ end
 
 ---@param options table
 function M.run_current_spec(options)
-  local command, runtime_path = build_commands(options or {})
+  local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+
+  -- TODO: Since rspec has no restrictions on file names to be tested,
+  --       the file formats that are allowed to be executed can be changed in the settings.
+  -- see: https://relishapp.com/rspec/rspec-core/v/3-11/docs/spec-files/arbitrary-file-suffix
+  if not vim.endswith(bufname, '_spec.rb') then
+    vim.notify("Cannot run rspec because of an invalid file name.", vim.log.levels.WARN)
+    return
+  end
+
+  local command, runtime_path = build_commands(bufname, options or {})
+
   run_rspec(command, runtime_path)
   save_last_command(command, runtime_path)
 end
