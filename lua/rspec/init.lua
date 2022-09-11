@@ -1,4 +1,4 @@
-local utils = require "rspec.utils"
+local utils = require("rspec.utils")
 local last_failed_test_path = vim.fn.stdpath("data") .. "/" .. "rspec_last_failed_examples"
 local M = {}
 
@@ -45,7 +45,7 @@ local function build_commands(bufname, options)
   local rspec_cmd, runtime_path = determine_rspec_command_and_runtime_path()
   local option_args = {
     '--format',
-    'documentation',
+    'progress',
     '--format',
     'failures',
     '--out',
