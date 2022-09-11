@@ -38,6 +38,7 @@ TODO
   - [x] The last test results can be viewed in a floating window. (success or failure)
   - [ ] Color the last test result.
   - [ ] When the cursor is hovered over a failed test, detailed information is displayed in a floating window.
+  - [ ] Show the sign of the test result on the editor
 - About error handling
   - [ ] Consider cases that do not match rspec filename format. (expected: `_spec.rb`)
   - [ ] Consider the case where `rspec` is not installed.
