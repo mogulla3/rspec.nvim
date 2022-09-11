@@ -39,20 +39,12 @@ end
 
 --- TODO: Change to a better method name OR split the method
 ---
----@param opts table
-local function build_commands(opts)
+---@param options table
+local function build_commands(options)
   local bufnr = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(bufnr)
   local rspec_cmd, runtime_path = determine_rspec_command_and_runtime_path()
-
-  if opts.only_nearest then
-    local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
-    bufname = bufname .. ":" .. current_line_number
-  end
-
-  local command = {
-    rspec_cmd,
-    bufname,
+  local option_args = {
     '--format',
     'documentation',
     '--format',
@@ -60,6 +52,13 @@ local function build_commands(opts)
     '--out',
     last_failed_test_path,
   }
+
+  if options.only_nearest then
+    local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
+    bufname = bufname .. ":" .. current_line_number
+  end
+
+  local command = vim.list_extend({ rspec_cmd, bufname }, option_args)
 
   return command, runtime_path
 end
@@ -148,14 +147,9 @@ local function run_rspec(command, runtime_path)
   return job_id
 end
 
-function M.run_current_spec_file()
-  local command, runtime_path = build_commands({})
-  run_rspec(command, runtime_path)
-  save_last_command(command, runtime_path)
-end
-
-function M.run_nearest_spec()
-  local command, runtime_path = build_commands({ only_nearest = true })
+---@param options table
+function M.run_current_spec(options)
+  local command, runtime_path = build_commands(options or {})
   run_rspec(command, runtime_path)
   save_last_command(command, runtime_path)
 end
@@ -209,8 +203,8 @@ function M.setup()
   vim.api.nvim_set_hl(0, 'RSpecPassed', { default = true, link = 'DiffAdd' })
   vim.api.nvim_set_hl(0, 'RSpecFailed', { default = true, link = 'DiffDelete' })
 
-  vim.cmd "command! RunCurrentSpecFile lua require('rspec').run_current_spec_file()<CR>"
-  vim.cmd "command! RunNearestSpec lua require('rspec').run_nearest_spec()<CR>"
+  vim.cmd "command! RunCurrentSpec lua require('rspec').run_current_spec()<CR>"
+  vim.cmd "command! RunNearestSpec lua require('rspec').run_current_spec({ only_nearest = true })<CR>"
   vim.cmd "command! RunLastSpec lua require('rspec').run_last_spec()<CR>"
   vim.cmd "command! ShowLastSpecResult lua require('rspec').show_last_spec_result()<CR>"
 end
