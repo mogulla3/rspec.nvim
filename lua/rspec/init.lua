@@ -64,6 +64,35 @@ local function build_commands(opts)
   return command, runtime_path
 end
 
+--- Open a window showing rspec progress
+---
+---@return number window id
+local function open_progress_window()
+  local bufnr = vim.api.nvim_create_buf(false, true)
+  local win_width = vim.fn.winwidth(0)
+  local win_height = vim.fn.winheight(0)
+
+  -- Render floating window on right bottom
+  local opts = {
+    relative = "win",
+    anchor = "SE",
+    focusable = false,
+    row = win_height - 2,
+    col = win_width - 4,
+    width = 16, -- fit to message length
+    height = 1,
+    style = "minimal",
+    border = "rounded",
+  }
+
+  local win_id = vim.api.nvim_open_win(bufnr, false, opts)
+  vim.api.nvim_win_set_buf(win_id, bufnr)
+  vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, { "Running RSpec..." })
+  vim.api.nvim_win_set_option(win_id, 'winhl', 'Normal:ErrorFloat')
+
+  return win_id
+end
+
 --- Run rspec command
 ---
 ---@param command table
@@ -71,6 +100,8 @@ end
 ---@return number
 local function run_rspec(command, runtime_path)
   vim.api.nvim_command("cclose")
+
+  local progress_win_id = open_progress_window()
 
   utils.log(vim.inspect(command))
   utils.log(vim.inspect(runtime_path))
@@ -90,9 +121,12 @@ local function run_rspec(command, runtime_path)
     end,
     -- see: help :on_exit
     on_exit = function(_, exit_code, _)
+      vim.api.nvim_win_close(progress_win_id, true)
+
       if exit_code == 0 then
         vim.api.nvim_echo({{'spec passed', 'RSpecPassed'}}, true, {})
       else
+        -- TODO: Make the message more detailed but in an amount that fits on 1 line.
         vim.api.nvim_echo({{'spec failed', 'RSpecFailed'}}, true, {})
 
         -- In the case of errors prior to running RSpec, such as SyntaxError, nothing is written to the file.
