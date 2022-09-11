@@ -53,7 +53,6 @@ local function build_commands(opts)
   local command = {
     rspec_cmd,
     bufname,
-    '--no-color',
     '--format',
     'documentation',
     '--format',
@@ -84,20 +83,10 @@ local function run_rspec(command, runtime_path)
     stdout_buffered = true,
     stderr_buffered = true,
     on_stdout = function(_, data, _)
-      local stdout_output = {}
-      for _, line in pairs(data) do
-        table.insert(stdout_output, vim.fn.substitute(line, "\r", "", ""))
-      end
-
-      vim.g.last_command_stdout = stdout_output
+      vim.g.last_command_stdout = data
     end,
     on_stderr = function(_, data, _)
-      local stderr_output = {}
-      for _, line in pairs(data) do
-        table.insert(stderr_output, vim.fn.substitute(line, "\r", "", ""))
-      end
-
-      vim.g.last_command_stderr = stderr_output
+      vim.g.last_command_stderr = data
     end,
     -- see: help :on_exit
     on_exit = function(_, exit_code, _)
