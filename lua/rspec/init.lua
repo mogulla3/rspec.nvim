@@ -58,6 +58,10 @@ local function build_commands(options)
     bufname = bufname .. ":" .. current_line_number
   end
 
+  if options.only_failures then
+    table.insert(option_args, "--only-failures")
+  end
+
   local command = vim.list_extend({ rspec_cmd, bufname }, option_args)
 
   return command, runtime_path
@@ -205,6 +209,7 @@ function M.setup()
 
   vim.cmd "command! RunCurrentSpec lua require('rspec').run_current_spec()<CR>"
   vim.cmd "command! RunNearestSpec lua require('rspec').run_current_spec({ only_nearest = true })<CR>"
+  vim.cmd "command! RunFailedSpec lua require('rspec').run_current_spec({ only_failures = true })<CR>"
   vim.cmd "command! RunLastSpec lua require('rspec').run_last_spec()<CR>"
   vim.cmd "command! ShowLastSpecResult lua require('rspec').show_last_spec_result()<CR>"
 end

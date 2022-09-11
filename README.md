@@ -21,7 +21,7 @@ TODO
   - [x] Run rspec to file (current buffer).
   - [x] Run rspec to close to the cursor potision.
   - [x] Run rspec to last test run.
-  - [ ] Run rspec with the `--only-failures` option.
+  - [x] Run rspec with the `--only-failures` option.
 - About rspec commands at runtime
   - [x] Move the current directory to a nice place and run it.
     - Since `rspec` can only be run from project root.
