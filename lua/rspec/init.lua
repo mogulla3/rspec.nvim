@@ -161,14 +161,13 @@ function M.show_last_spec_result()
   if vim.g.last_command_stdout then
     vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, vim.g.last_command_stdout)
   else
-    vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, {"No specs have been run yet in this session."})
+    vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, { "No specs have been run yet in this session." })
   end
 
   vim.api.nvim_win_set_option(win_id, 'winhl', 'Normal:ErrorFloat')
 end
 
 function M.setup()
-  -- For the purpose of storing the last rspec command
   vim.g.last_command = nil
   vim.g.last_command_stdout = nil
   vim.g.last_command_stderr = nil
