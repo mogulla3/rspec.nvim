@@ -28,11 +28,11 @@ TODO
   - [x] rspec in the following order of priority
     - `bin/rspec` -> `bundle exec rspec` -> `rspec` (global)
 - About test execution
-  - [x] (try) Run rspec as background job
-  - [@] (try) Displaying progress in a floating window during test execution
-  - [@] (try) When the test is completed, report the results in a floating window.
-  - [ ] (try) No other jobs are accepted while a test job is running.
-  - [x] (try) If a failed test exists, register it with quickfix and automatically open it.
+  - [x] Run rspec as background job.
+  - [x] Displaying progress in a floating window during test execution.
+  - [x] If a failed test exists, register it with quickfix and automatically open it.
+  - ~When the test is completed, report the results in a floating window.~
+  - [ ] No other jobs are accepted while a test job is running.
 - About the results of the test
   - [x] Failed tests are thrown into quickfix.
   - [x] The last test results can be viewed in a floating window. (success or failure)
@@ -44,7 +44,7 @@ TODO
 - About docs
   - [ ] Write docs.
 - About config
-  - [ ] Allow users to change above behaviors in settings.
+  - [@] Allow users to change above behaviors in settings.
   - [ ] Allow command line options to be passed freely.
   - [ ] Debug output can be enabled in the settings.
 - Others
