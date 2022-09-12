@@ -36,7 +36,7 @@ function M.run_last_spec()
   if last_command then
     runner.run_rspec(last_command.command, last_command.runtime_path)
   else
-    vim.notify("last command not found", vim.log.levels.WARN)
+    vim.notify("No specs have been run yet.", vim.log.levels.WARN)
   end
 end
 
