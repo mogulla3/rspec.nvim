@@ -41,7 +41,6 @@ function M.run_last_spec()
   end
 end
 
--- TODO: Consider already opened float window
 function M.show_last_spec_result()
   if last_spec_result_win_id then
     vim.api.nvim_win_close(last_spec_result_win_id, true)
