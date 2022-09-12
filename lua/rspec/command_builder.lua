@@ -14,8 +14,8 @@ local function get_ancestor_paths()
 
   repeat
     table.insert(ancestor_paths, current_path)
-    current_path = vim.fn.fnamemodify(current_path, ':h')
-  until current_path == '/'
+    current_path = vim.fn.fnamemodify(current_path, ":h")
+  until current_path == "/"
 
   return ancestor_paths
 end
@@ -62,11 +62,11 @@ end
 function CommandBuilder.build(bufname, options)
   local rspec_cmd, runtime_path = determine_rspec_command_and_runtime_path()
   local option_args = {
-    '--format',
-    'progress',
-    '--format',
-    'failures',
-    '--out',
+    "--format",
+    "progress",
+    "--format",
+    "failures",
+    "--out",
     config.last_failed_spec_path,
   }
 

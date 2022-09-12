@@ -27,7 +27,7 @@ local function open_progress_window()
   local win_id = vim.api.nvim_open_win(bufnr, false, opts)
   vim.api.nvim_win_set_buf(win_id, bufnr)
   vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, { "Running RSpec..." })
-  vim.api.nvim_win_set_option(win_id, 'winhl', 'Normal:ErrorFloat')
+  vim.api.nvim_win_set_option(win_id, "winhl", "Normal:ErrorFloat")
 
   return win_id
 end
@@ -63,10 +63,10 @@ function Runner.run_rspec(command, runtime_path)
       vim.api.nvim_win_close(progress_win_id, true)
 
       if exit_code == 0 then
-        vim.api.nvim_echo({{'spec passed', 'RSpecPassed'}}, true, {})
+        vim.api.nvim_echo({ { "spec passed", "RSpecPassed" } }, true, {})
       else
         -- TODO: Make the message more detailed but in an amount that fits on 1 line.
-        vim.api.nvim_echo({{'spec failed', 'RSpecFailed'}}, true, {})
+        vim.api.nvim_echo({ { "spec failed", "RSpecFailed" } }, true, {})
 
         -- In the case of errors prior to running RSpec, such as SyntaxError, nothing is written to the file.
         -- Therefore, the file size is used for verification.

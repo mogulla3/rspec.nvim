@@ -4,7 +4,7 @@ local default_config = {
   -- File name patterns that can run rspec
   -- MEMO: Might as well accept regular expressions.
   allowed_file_format = function(filename)
-    return vim.endswith(filename, '_spec.rb')
+    return vim.endswith(filename, "_spec.rb")
   end,
 
   -- Whether or not to focus on a window when `ShowLastSpecResult` command executed.

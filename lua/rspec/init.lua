@@ -68,7 +68,7 @@ function M.show_last_spec_result()
     vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, { "No specs have been run yet in this session." })
   end
 
-  vim.api.nvim_win_set_option(win_id, 'winhl', 'Normal:ErrorFloat')
+  vim.api.nvim_win_set_option(win_id, "winhl", "Normal:ErrorFloat")
 end
 
 ---@param user_config table
@@ -80,14 +80,14 @@ function M.setup(user_config)
   vim.g.last_command_stdout = nil
   vim.g.last_command_stderr = nil
 
-  vim.api.nvim_set_hl(0, 'RSpecPassed', { default = true, link = 'DiffAdd' })
-  vim.api.nvim_set_hl(0, 'RSpecFailed', { default = true, link = 'DiffDelete' })
+  vim.api.nvim_set_hl(0, "RSpecPassed", { default = true, link = "DiffAdd" })
+  vim.api.nvim_set_hl(0, "RSpecFailed", { default = true, link = "DiffDelete" })
 
-  vim.cmd "command! RunCurrentSpec lua require('rspec').run_current_spec()<CR>"
-  vim.cmd "command! RunNearestSpec lua require('rspec').run_current_spec({ only_nearest = true })<CR>"
-  vim.cmd "command! RunFailedSpec lua require('rspec').run_current_spec({ only_failures = true })<CR>"
-  vim.cmd "command! RunLastSpec lua require('rspec').run_last_spec()<CR>"
-  vim.cmd "command! ShowLastSpecResult lua require('rspec').show_last_spec_result()<CR>"
+  vim.cmd("command! RunCurrentSpec lua require('rspec').run_current_spec()<CR>")
+  vim.cmd("command! RunNearestSpec lua require('rspec').run_current_spec({ only_nearest = true })<CR>")
+  vim.cmd("command! RunFailedSpec lua require('rspec').run_current_spec({ only_failures = true })<CR>")
+  vim.cmd("command! RunLastSpec lua require('rspec').run_last_spec()<CR>")
+  vim.cmd("command! ShowLastSpecResult lua require('rspec').show_last_spec_result()<CR>")
 end
 
 return M
