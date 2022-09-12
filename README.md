@@ -53,4 +53,4 @@ TODO
 - Others
   - [ ] Write tests.
   - [ ] checkhealth
-  - [ ] stylua
+  - [x] stylua
