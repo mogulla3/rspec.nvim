@@ -21,7 +21,7 @@ function M.run_current_spec(options)
   local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
 
   if not config.allowed_file_format(bufname) then
-    vim.notify("Cannot run rspec because of an invalid file name.", vim.log.levels.WARN)
+    vim.notify("[rspec.nvim] Cannot run rspec because of an invalid file name.", vim.log.levels.WARN)
     return
   end
 
@@ -37,7 +37,7 @@ function M.run_last_spec()
   if last_command then
     runner.run_rspec(last_command.command, last_command.runtime_path)
   else
-    vim.notify("No specs have been run yet.", vim.log.levels.WARN)
+    vim.notify("[rspec.nvim] No specs have been run yet.", vim.log.levels.WARN)
   end
 end
 
