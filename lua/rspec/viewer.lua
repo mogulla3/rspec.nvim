@@ -32,7 +32,7 @@ function Viewer.open_last_spec_result_window()
   if vim.g.last_command_stdout then
     vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, vim.g.last_command_stdout)
   else
-    vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, { "No specs have been run yet in this session." })
+    vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, { "No specs have been run yet." })
   end
 
   vim.api.nvim_win_set_option(last_spec_result_win_id, "winhl", "Normal:ErrorFloat")
