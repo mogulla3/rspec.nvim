@@ -8,7 +8,7 @@ local default_config = {
   end,
 
   -- Whether or not to focus on a window when `ShowLastSpecResult` command executed.
-  focus_on_last_spec_result_window = false,
+  focus_on_last_spec_result_window = true,
 
   -- Whether or not to open the quickfix window when the spec fails.
   open_quickfix_when_spec_failed = true,

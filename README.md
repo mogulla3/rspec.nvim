@@ -38,7 +38,7 @@ TODO
   - [x] Failed tests are thrown into quickfix.
   - [x] The last test results can be viewed in a floating window. (success or failure)
   - [x] Avoid duplicate floating windows for viewing last test results.
-  - [@] Setup keymap on float window. (for easy to close)
+  - [x] Setup keymap on float window. (for easy to close)
   - [@] Show a single sentence summarizing the results of the test run on.
   - [ ] Color the last test result.
   - [ ] When the cursor is hovered over a failed test, detailed information is displayed in a floating window.
