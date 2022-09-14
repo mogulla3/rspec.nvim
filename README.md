@@ -45,7 +45,7 @@ TODO
   - [ ] Show the sign of the test result on the editor
 - About error handling
   - [x] Consider cases that do not match rspec filename format. (expected: `_spec.rb`)
-  - [ ] Consider the case where `rspec` is not installed.
+  - [x] Consider the case where `rspec` is not installed.
 - About docs
   - [ ] Write docs.
 - About config

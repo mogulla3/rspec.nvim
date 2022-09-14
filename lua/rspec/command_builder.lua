@@ -41,18 +41,18 @@ end
 --- * bundle exec rspec -> Path where Gemfile is located.
 --- * rspec -> current working directory
 ---
----@return string: rspec command
+---@return table: rspec command
 ---@return string: runtime path to run rspec command
 local function determine_rspec_command_and_runtime_path()
   for _, path in pairs(get_ancestor_paths()) do
     if has_file(path, "bin/rspec") then
-      return "bin/rspec", path
+      return { "bin/rspec" }, path
     elseif has_file(path, "Gemfile") then
-      return "bundle exec rspec", path
+      return { "bundle", "exec", "rspec" }, path
     end
   end
 
-  return "rspec", vim.fn.getcwd()
+  return { "rspec" }, vim.fn.getcwd()
 end
 
 --- Build rspec command to be run
@@ -61,7 +61,14 @@ end
 ---@param options table
 function CommandBuilder.build(bufname, options)
   local rspec_cmd, runtime_path = determine_rspec_command_and_runtime_path()
-  local option_args = {
+
+  if options.only_nearest then
+    local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
+    bufname = bufname .. ":" .. current_line_number
+  end
+
+  local args = {
+    bufname,
     "--format",
     "progress",
     "--format",
@@ -70,16 +77,11 @@ function CommandBuilder.build(bufname, options)
     config.last_failed_spec_path,
   }
 
-  if options.only_nearest then
-    local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
-    bufname = bufname .. ":" .. current_line_number
-  end
-
   if options.only_failures then
-    table.insert(option_args, "--only-failures")
+    table.insert(args, "--only-failures")
   end
 
-  local command = vim.list_extend({ rspec_cmd, bufname }, option_args)
+  local command = vim.list_extend(rspec_cmd, args)
 
   return command, runtime_path
 end

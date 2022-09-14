@@ -64,7 +64,7 @@ function Runner.run_rspec(command, runtime_path)
 
       if exit_code == 0 then
         vim.api.nvim_echo({ { "[rspec.nvim] spec passed", "RSpecPassed" } }, true, {})
-      else
+      elseif exit_code == 1 then
         -- TODO: Make the message more detailed but in an amount that fits on 1 line.
         vim.api.nvim_echo({ { "[rspec.nvim] spec failed", "RSpecFailed" } }, true, {})
 
@@ -79,12 +79,14 @@ function Runner.run_rspec(command, runtime_path)
             vim.api.nvim_command("copen")
           end
         end
+      else
+        vim.api.nvim_echo({ { string.format("[rspec.nvim] command failed (exit_code=%i)", exit_code), "RSpecFailed" } }, true, {})
       end
     end,
   })
 
   if job_id < 1 then
-    vim.notify(string.format("[rspec.nvim] command failed(%i)", job_id), vim.log.levels.ERROR)
+    vim.notify(string.format("[rspec.nvim] command failed (%i)", job_id), vim.log.levels.ERROR)
   end
 
   return job_id
