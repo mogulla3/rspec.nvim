@@ -41,19 +41,17 @@ TODO
   - [x] Show a single sentence summarizing the results of the test run on.
   - [@] Save test rusult to tempfile. (and remove from config)
   - [@] Set the cursor position on the floating window to the beginning.
-  - [ ] Color the last test result.
+  - [@] Color the last test result.
   - [ ] When the cursor is hovered over a failed test, detailed information is displayed in a floating window.
   - [ ] Show the sign of the test result on the editor
 - About error handling
   - [x] Consider cases that do not match rspec filename format. (expected: `_spec.rb`)
   - [x] Consider the case where `rspec` is not installed.
-- About docs
-  - [ ] Write docs.
 - About config
   - [x] Allow users to change above behaviors in settings.
-  - [ ] Debug output can be enabled in the settings.
 - Others
-  - [ ] Write tests.
-  - [ ] checkhealth
   - [x] stylua
-  - [ ] CI with GitHub Actions
+  - [ ] Write docs.
+  - [ ] Write tests.
+  - [ ] Support checkhealth.
+  - [ ] Setup CI with GitHub Actions.
