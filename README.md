@@ -32,7 +32,6 @@ TODO
   - [x] Run rspec as background job.
   - [x] Displaying progress in a floating window during test execution.
   - [x] If a failed test exists, register it with quickfix and automatically open it.
-  - [x] ~When the test is completed, report the results in a floating window.~
   - [ ] No other jobs are accepted while a test job is running.
 - About the results of the test
   - [x] Failed tests are thrown into quickfix.
