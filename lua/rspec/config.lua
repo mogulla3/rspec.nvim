@@ -13,6 +13,9 @@ local default_config = {
   -- Whether or not to open the quickfix window when the spec fails.
   open_quickfix_when_spec_failed = true,
 
+  -- File path to save the last spec result.
+  last_result_path = vim.fn.stdpath("data") .. "/" .. "rspec_last_result",
+
   -- File path to save the last failed spec result.
   last_failed_result_path = vim.fn.stdpath("data") .. "/" .. "rspec_last_failed_result",
 }
