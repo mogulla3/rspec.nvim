@@ -74,7 +74,7 @@ function CommandBuilder.build(bufname, options)
     "--format",
     "failures",
     "--out",
-    config.last_failed_spec_path,
+    config.last_failed_result_path,
   }
 
   if options.only_failures then
