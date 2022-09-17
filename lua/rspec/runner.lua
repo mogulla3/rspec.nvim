@@ -77,7 +77,7 @@ function Runner.run_rspec(command, runtime_path)
         -- Therefore, the file size is used for verification.
         if vim.fn.getfsize(config.last_failed_result_path) > 0 then
           local failed_examples = vim.fn.readfile(config.last_failed_result_path)
-          failed_examples = vim.list_extend({ "Failed examples are as follows." }, failed_examples)
+          failed_examples = vim.list_extend({ "[rspec.nvim] Failed examples" }, failed_examples)
           vim.fn.setqflist({}, "r", { efm = "%f:%l:%m", lines = failed_examples })
 
           if config.open_quickfix_when_spec_failed then
