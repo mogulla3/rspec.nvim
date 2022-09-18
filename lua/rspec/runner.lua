@@ -63,7 +63,7 @@ function Runner.run_rspec(command, runtime_path)
       vim.api.nvim_win_close(progress_win_id, true)
 
       if exit_code ~= 0 and exit_code ~= 1 then
-        vim.api.nvim_echo({ { string.format("[rspec.nvim] command failed (exit_code=%i)", exit_code), "RSpecFailed" } }, true, {})
+        vim.api.nvim_echo({ { string.format("[rspec.nvim] COMMAND FAILED : exit_code=%i", exit_code), "RSpecFailed" } }, true, {})
         return
       end
 
@@ -74,10 +74,9 @@ function Runner.run_rspec(command, runtime_path)
       end
 
       if exit_code == 0 then
-        vim.api.nvim_echo({ { "[rspec.nvim] spec passed : " .. result.summary_line, "RSpecPassed" } }, true, {})
+        vim.api.nvim_echo({ { "[rspec.nvim] PASSED : " .. result.summary_line, "RSpecPassed" } }, true, {})
       else
-        -- TODO: Make the message more detailed but in an amount that fits on 1 line.
-        vim.api.nvim_echo({ { "[rspec.nvim] spec failed : " .. result.summary_line, "RSpecFailed" } }, true, {})
+        vim.api.nvim_echo({ { "[rspec.nvim] FAILED : " .. result.summary_line, "RSpecFailed" } }, true, {})
 
         -- In the case of errors prior to running RSpec, such as SyntaxError, nothing is written to the file.
         -- Therefore, the file size is used for verification.
