@@ -5,19 +5,17 @@ local Runner = {}
 
 --- Open a window showing rspec progress
 ---
----@return number: window id
+---@return table: window id and buffer number
 local function open_progress_window()
   local bufnr = vim.api.nvim_create_buf(false, true)
-  local win_width = vim.fn.winwidth(0)
-  local win_height = vim.fn.winheight(0)
 
   -- Render floating window on right bottom
   local opts = {
     relative = "win",
     anchor = "SE",
     focusable = false,
-    row = win_height - 2,
-    col = win_width - 4,
+    row = vim.fn.winheight(0) - 2,
+    col = vim.fn.winwidth(0) - 4,
     width = 16, -- fit to message length
     height = 1,
     style = "minimal",
@@ -29,7 +27,7 @@ local function open_progress_window()
   vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, { "Running RSpec..." })
   vim.api.nvim_win_set_option(win_id, "winhl", "Normal:ErrorFloat")
 
-  return win_id
+  return { win_id = win_id, bufnr = bufnr }
 end
 
 --- Run rspec command
@@ -40,7 +38,7 @@ end
 function Runner.run_rspec(command, runtime_path)
   vim.api.nvim_command("cclose")
 
-  local progress_win_id = open_progress_window()
+  local progress_window = open_progress_window()
 
   logger.log(vim.inspect(command))
   logger.log(vim.inspect(runtime_path))
@@ -60,7 +58,8 @@ function Runner.run_rspec(command, runtime_path)
     end,
     -- see: help :on_exit
     on_exit = function(_, exit_code, _)
-      vim.api.nvim_win_close(progress_win_id, true)
+      vim.api.nvim_win_close(progress_window.win_id, true)
+      vim.api.nvim_buf_delete(progress_window.bufnr, { force = true })
 
       if exit_code ~= 0 and exit_code ~= 1 then
         vim.api.nvim_echo({ { string.format("[rspec.nvim] COMMAND FAILED : exit_code=%i", exit_code), "RSpecFailed" } }, true, {})
