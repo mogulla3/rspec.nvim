@@ -69,16 +69,12 @@ function CommandBuilder.build(bufname, options)
 
   local args = {
     bufname,
-    "--format",
-    "progress",
-    "--format",
-    "json",
-    "--out",
-    config.last_result_path,
-    "--format",
-    "failures",
-    "--out",
-    config.last_failed_result_path,
+    "--force-color",
+    "--format", "progress",
+    "--format", "json",
+    "--out", config.last_result_path,
+    "--format", "failures",
+    "--out", config.last_failed_result_path,
   }
 
   if options.only_failures then

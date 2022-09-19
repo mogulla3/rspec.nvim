@@ -39,9 +39,8 @@ TODO
   - [x] Avoid duplicate floating windows for viewing last test results.
   - [x] Setup keymap on float window. (for easy to close)
   - [x] Show a single sentence summarizing the results of the test run on.
-  - [@] Save test rusult to tempfile. (and remove from config)
   - [@] Set the cursor position on the floating window to the beginning.
-  - [@] Color the last test result.
+  - [x] Color the last test result.
   - [ ] When the cursor is hovered over a failed test, detailed information is displayed in a floating window.
   - [ ] Show the sign of the test result on the editor
 - About error handling
