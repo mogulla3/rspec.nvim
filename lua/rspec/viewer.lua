@@ -29,7 +29,7 @@ local function create_window()
   local bufnr = create_buffer()
 
   -- margin: 5 10
-  local win_opts = {
+  local opts = {
     relative = "editor",
     row = 5,
     col = 10,
@@ -39,7 +39,7 @@ local function create_window()
     border = "rounded",
   }
 
-  local win_id = vim.api.nvim_open_win(bufnr, config.focus_on_last_spec_result_window, win_opts)
+  local win_id = vim.api.nvim_open_win(bufnr, config.focus_on_last_spec_result_window, opts)
   vim.api.nvim_win_set_option(win_id, "wrap", true)
   vim.api.nvim_win_set_option(win_id, "winhl", "Normal:ErrorFloat")
   vim.api.nvim_win_set_buf(win_id, bufnr)
