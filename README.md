@@ -32,14 +32,14 @@ TODO
   - [x] Run rspec as background job.
   - [x] Displaying progress in a floating window during test execution.
   - [x] If a failed test exists, register it with quickfix and automatically open it.
-  - [ ] No other jobs are accepted while a test job is running.
+  - [@] No other jobs are accepted while a test job is running.
 - About the results of the test
   - [x] Failed tests are thrown into quickfix.
   - [x] The last test results can be viewed in a floating window. (success or failure)
   - [x] Avoid duplicate floating windows for viewing last test results.
   - [x] Setup keymap on float window. (for easy to close)
   - [x] Show a single sentence summarizing the results of the test run on.
-  - [@] Set the cursor position on the floating window to the beginning.
+  - [x] Set the cursor position on the floating window to the beginning.
   - [x] Color the last test result.
   - [ ] When the cursor is hovered over a failed test, detailed information is displayed in a floating window.
   - [ ] Show the sign of the test result on the editor
@@ -50,7 +50,8 @@ TODO
   - [x] Allow users to change above behaviors in settings.
 - Others
   - [x] stylua
-  - [ ] Write docs.
-  - [ ] Write tests.
+  - [@] Make REAMDE.md more attractive
+  - [@] Write docs.
   - [ ] Support checkhealth.
+  - [ ] Write tests.
   - [ ] Setup CI with GitHub Actions.
