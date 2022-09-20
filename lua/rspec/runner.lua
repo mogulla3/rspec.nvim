@@ -1,6 +1,6 @@
 local config = require("rspec.config")
-local logger = require("rspec.logger")
 
+local rspec_running = false
 local Runner = {}
 
 --- Open a window showing rspec progress
@@ -102,10 +102,16 @@ end
 ---
 ---@param command string[]
 ---@param exec_path string
----@return number # job id (return value of `jobstart`)
+---@return number|nil # number: job id (return value of `jobstart`), nil: return if rspec is running
 function Runner.run_rspec(command, exec_path)
+  if rspec_running then
+    vim.notify("[rspec.nvim] rspec is already running.", vim.log.levels.ERROR)
+    return
+  end
+
   vim.api.nvim_command("cclose")
 
+  rspec_running = true
   local progress_window = create_progress_window()
 
   local job_id = vim.fn.jobstart(command, {
@@ -127,6 +133,8 @@ function Runner.run_rspec(command, exec_path)
       if exit_code == 1 then
         add_failed_examples_to_quickfix()
       end
+
+      rspec_running = false
     end,
   })
 
