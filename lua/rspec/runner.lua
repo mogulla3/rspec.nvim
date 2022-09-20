@@ -108,9 +108,6 @@ function Runner.run_rspec(command, exec_path)
 
   local progress_window = create_progress_window()
 
-  logger.log(vim.inspect(command))
-  logger.log(vim.inspect(exec_path))
-
   local job_id = vim.fn.jobstart(command, {
     cwd = exec_path,
     stdout_buffered = true,
