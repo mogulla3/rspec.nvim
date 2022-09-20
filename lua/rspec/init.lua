@@ -56,6 +56,7 @@ function M.setup(user_config)
 
   vim.api.nvim_set_hl(0, "RSpecPassed", { default = true, link = "DiffAdd" })
   vim.api.nvim_set_hl(0, "RSpecFailed", { default = true, link = "DiffDelete" })
+  vim.api.nvim_set_hl(0, "RSpecAborted", { default = true, link = "DiffDelete" })
 
   vim.cmd("command! RunCurrentSpec lua require('rspec').run_current_spec()<CR>")
   vim.cmd("command! RunNearestSpec lua require('rspec').run_current_spec({ only_nearest = true })<CR>")
