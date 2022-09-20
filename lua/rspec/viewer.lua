@@ -5,11 +5,11 @@ local last_spec_result_win_id = nil
 
 local Viewer = {}
 
----@return number
+---@return number # number of created buffer
 local function create_buffer()
   local bufnr = vim.api.nvim_create_buf(false, true)
 
-  -- Key mappings for easy window closing
+  -- Set key mappings for easy window closing
   for _, closing_key in pairs(closing_keys) do
     vim.api.nvim_buf_set_keymap(bufnr, "n", closing_key, "", {
       noremap = true,
@@ -24,9 +24,10 @@ local function create_buffer()
   return bufnr
 end
 
----@param bufnr number
----@return number
-local function open_window(bufnr)
+---@return table { win_id: number, bufnr: number }
+local function create_window()
+  local bufnr = create_buffer()
+
   -- margin: 5 10
   local win_opts = {
     relative = "editor",
@@ -43,9 +44,12 @@ local function open_window(bufnr)
   vim.api.nvim_win_set_option(win_id, "winhl", "Normal:ErrorFloat")
   vim.api.nvim_win_set_buf(win_id, bufnr)
 
-  return win_id
+  return { win_id = win_id, bufnr = bufnr }
 end
 
+--- Build the last test result output by RSpec.
+--- The format is designed to be output to a terminal.
+---
 ---@return string
 local function build_buffer_content()
   local buf_content = nil
@@ -69,17 +73,19 @@ function Viewer.open_last_spec_result_window()
     vim.api.nvim_win_close(last_spec_result_win_id, true)
   end
 
-  local bufnr = create_buffer()
-  last_spec_result_win_id = open_window(bufnr)
-  local chan = vim.api.nvim_open_term(bufnr, {})
+  local window = create_window()
+  local bufnr = window.bufnr
+  last_spec_result_win_id = window.win_id
+
+  local chan_id = vim.api.nvim_open_term(bufnr, {})
   local buf_content = build_buffer_content()
-  vim.api.nvim_chan_send(chan, buf_content)
+  vim.api.nvim_chan_send(chan_id, buf_content)
 
   vim.api.nvim_create_autocmd("WinClosed", {
     buffer = bufnr,
     callback = function()
       vim.api.nvim_buf_delete(bufnr, { force = true })
-      vim.fn.chanclose(chan)
+      vim.fn.chanclose(chan_id)
     end
   })
 end
