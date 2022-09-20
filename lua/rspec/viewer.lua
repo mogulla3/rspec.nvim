@@ -24,7 +24,7 @@ local function create_buffer()
   return bufnr
 end
 
----@return table { win_id: number, bufnr: number }
+---@return { win_id: number, bufnr: number }
 local function create_window()
   local bufnr = create_buffer()
 
