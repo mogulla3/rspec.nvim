@@ -1,4 +1,6 @@
 local config = require("rspec.config")
+
+local closing_keys = { "q", "<Esc>", "<CR>" }
 local last_spec_result_win_id = nil
 
 local Viewer = {}
@@ -8,8 +10,8 @@ local function create_buffer()
   local bufnr = vim.api.nvim_create_buf(false, true)
 
   -- Key mappings for easy window closing
-  for _, key in pairs({ "<Esc>", "<CR>", "q" }) do
-    vim.api.nvim_buf_set_keymap(bufnr, "n", key, "", {
+  for _, closing_key in pairs(closing_keys) do
+    vim.api.nvim_buf_set_keymap(bufnr, "n", closing_key, "", {
       noremap = true,
       silent = true,
       callback = function()
@@ -54,7 +56,7 @@ local function build_buffer_content()
     buf_content = { "No specs have been run yet." }
   end
 
-  buf_content = vim.list_extend(buf_content, { "", "* Close the window with the following keys : q, <Esc>, <CR>" })
+  buf_content = vim.list_extend(buf_content, { "", "* Close the window with the following keys : " .. table.concat(closing_keys, ", ") })
   buf_content = table.concat(buf_content, "\r\n")
 
   return buf_content
