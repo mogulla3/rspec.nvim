@@ -6,8 +6,7 @@ local CommandBuilder = {}
 --- The return value does not include the root path ("/").
 --- Each path does not have a trailing slash.
 ---
----@return table
----        example: { "/foo/bar/baz", "/foo/bar", "/foo" }
+---@return string[] # example: { "/foo/bar/baz", "/foo/bar", "/foo" }
 local function get_ancestor_paths()
   local ancestor_paths = {}
   local current_path = vim.fn.getcwd()
@@ -22,10 +21,8 @@ end
 
 --- Returns whether or not `filename` exists in `path`
 ---
----@param path string
----       example: "/path/to/my_app"
----@param filename string
----       example: "Gemfile"
+---@param path string # example: "/path/to/my_app"
+---@param filename string # example: "Gemfile"
 ---@return boolean
 local function has_file(path, filename)
   return vim.fn.filereadable(path .. "/" .. filename) == 1
@@ -36,38 +33,43 @@ end
 --- * bundle exec rspec
 --- * rspec
 ---
---- In addition, the selected rspec command also determines the runtime path.
+--- In addition, the selected rspec command also determines the exec path.
 --- * bin/rspec -> Path where bin/rspec is located. Typically the root directory of the Rails app.
 --- * bundle exec rspec -> Path where Gemfile is located.
 --- * rspec -> current working directory
 ---
----@return table: rspec command
----@return string: runtime path to run rspec command
-local function determine_rspec_command_and_runtime_path()
+---@return { bin_cmd: string[], exec_path: string }
+local function determine_rspec_context()
+  local bin_cmd = { "rspec" }
+  local exec_path = vim.fn.getcwd()
+
   for _, path in pairs(get_ancestor_paths()) do
     if has_file(path, "bin/rspec") then
-      return { "bin/rspec" }, path
+      bin_cmd = { "bin/rspec" }
+      exec_path = path
     elseif has_file(path, "Gemfile") then
-      return { "bundle", "exec", "rspec" }, path
+      bin_cmd = { "bundle", "exec", "rspec" }
+      exec_path = path
     end
   end
 
-  return { "rspec" }, vim.fn.getcwd()
+  return { bin_cmd = bin_cmd, exec_path = exec_path }
 end
 
 --- Build rspec command to be run
 ---
----@param bufname string: "/path/to/sample_spec.rb"
+---@param bufname string # example: "/path/to/sample_spec.rb"
 ---@param options table
+---@return { cmd: string[], exec_path: string }
 function CommandBuilder.build(bufname, options)
-  local rspec_cmd, runtime_path = determine_rspec_command_and_runtime_path()
+  local rspec_context = determine_rspec_context()
 
   if options.only_nearest then
     local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
     bufname = bufname .. ":" .. current_line_number
   end
 
-  local args = {
+  local rspec_args = {
     bufname,
     "--force-color",
     "--format", "progress",
@@ -78,12 +80,13 @@ function CommandBuilder.build(bufname, options)
   }
 
   if options.only_failures then
-    table.insert(args, "--only-failures")
+    table.insert(rspec_args, "--only-failures")
   end
 
-  local command = vim.list_extend(rspec_cmd, args)
-
-  return command, runtime_path
+  return {
+    cmd = vim.list_extend(rspec_context.bin_cmd, rspec_args),
+    exec_path = rspec_context.exec_path
+  }
 end
 
 return CommandBuilder

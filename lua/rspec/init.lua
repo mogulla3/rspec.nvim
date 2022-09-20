@@ -5,14 +5,14 @@ local viewer = require("rspec.viewer")
 
 local M = {}
 
---- Save the last executed rspec command and runtime path.
+--- Save the last executed rspec command and exec path.
 ---
----@param command table
----@param runtime_path string
-local function save_last_command(command, runtime_path)
+---@param command string[]
+---@param exec_path string
+local function save_last_command(command, exec_path)
   vim.g.last_command = {
     command = command,
-    runtime_path = runtime_path,
+    exec_path = exec_path,
   }
 end
 
@@ -25,17 +25,17 @@ function M.run_current_spec(options)
     return
   end
 
-  local command, runtime_path = command_builder.build(bufname, options or {})
+  local cmd_context = command_builder.build(bufname, options or {})
 
-  runner.run_rspec(command, runtime_path)
-  save_last_command(command, runtime_path)
+  runner.run_rspec(cmd_context.cmd, cmd_context.exec_path)
+  save_last_command(cmd_context.cmd, cmd_context.exec_path)
 end
 
 function M.run_last_spec()
   local last_command = vim.g.last_command
 
   if last_command then
-    runner.run_rspec(last_command.command, last_command.runtime_path)
+    runner.run_rspec(last_command.command, last_command.exec_path)
   else
     vim.notify("[rspec.nvim] No specs have been run yet.", vim.log.levels.WARN)
   end
