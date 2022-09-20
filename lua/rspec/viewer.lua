@@ -17,7 +17,7 @@ local function create_buffer()
       callback = function()
         vim.api.nvim_win_close(last_spec_result_win_id, true)
         last_spec_result_win_id = nil
-      end
+      end,
     })
   end
 
@@ -60,7 +60,10 @@ local function build_buffer_content()
     buf_content = { "No specs have been run yet." }
   end
 
-  buf_content = vim.list_extend(buf_content, { "", "* Close the window with the following keys : " .. table.concat(closing_keys, ", ") })
+  buf_content = vim.list_extend(
+    buf_content,
+    { "", "* Close the window with the following keys : " .. table.concat(closing_keys, ", ") }
+  )
   buf_content = table.concat(buf_content, "\r\n")
 
   return buf_content
@@ -86,7 +89,7 @@ function Viewer.open_last_spec_result_window()
     callback = function()
       vim.api.nvim_buf_delete(bufnr, { force = true })
       vim.fn.chanclose(chan_id)
-    end
+    end,
   })
 end
 

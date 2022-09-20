@@ -72,11 +72,16 @@ function CommandBuilder.build(bufname, options)
   local rspec_args = {
     bufname,
     "--force-color",
-    "--format", "progress",
-    "--format", "json",
-    "--out", config.last_result_path,
-    "--format", "failures",
-    "--out", config.last_failed_result_path,
+    "--format",
+    "progress",
+    "--format",
+    "json",
+    "--out",
+    config.last_result_path,
+    "--format",
+    "failures",
+    "--out",
+    config.last_failed_result_path,
   }
 
   if options.only_failures then
@@ -85,7 +90,7 @@ function CommandBuilder.build(bufname, options)
 
   return {
     cmd = vim.list_extend(rspec_context.bin_cmd, rspec_args),
-    exec_path = rspec_context.exec_path
+    exec_path = rspec_context.exec_path,
   }
 end
 
