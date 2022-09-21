@@ -9,7 +9,6 @@ RSpec runner for Neovim. Written in Lua.
 - Smart selection of rspec commands and execution path.
 - Automatically add failed examples to the quickfix list.
 - Quickly view last results with floating window.
-- Written in Lua.
 
 ## Requirements
 
