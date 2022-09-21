@@ -1,19 +1,43 @@
 # rspec.nvim
 
-Test Runner for RSpec.
+RSpec runner for Neovim. Written in Lua.
 
 ## Features
 
-TODO
+- Asynchronous rspec execution. Does not block your editing.
+- Various rspec execution commands (inspired by test.vim). See [Commands](#Commands).
+- Smart selection of rspec commands and execution path.
+- Automatically add failed examples to the quickfix list.
+- Quickly view last results with floating window.
+- Written in Lua.
+
+## Requirements
+
+- Neovim >= x.x.x
+- RSpec >= x.x.x
+
+## Installation
+
+### [packer.nvim]
+
+```lua
+use { "mogulla3/rspec.nvim" }
+```
+
+### [vim-plug]
+
+```vim
+Plug "mogulla3/rspec.nvim"
+```
 
 ## Commands
 
 |Command|Description|
 |:--|:--|
 |`:RunCurrentSpec`|Run rspec on the current file.|
-|`:RunNearestSpec`|Run rspec on the spec nearest to the current cursor position.|
-|`:RunFailedSpec`|Run rspec on the current file with `--only-failures` option.|
+|`:RunNearestSpec`|Run rspec on the example nearest to the cursor position.|
 |`:RunLastSpec`|Re-run rspec with the last command executed.|
+|`:RunFailedSpec`|Run rspec on the current file with `--only-failures` option.|
 |`:ShowLastSpecResult`|Show last spec result on floating window.|
 
 ## TODOs
