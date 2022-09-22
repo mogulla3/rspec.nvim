@@ -6,7 +6,7 @@ RSpec runner for Neovim. Written in Lua.
 
 - Asynchronous rspec execution. Does not block your editing.
 - Various rspec execution commands (inspired by test.vim). See [Commands](#Commands).
-- Smart selection of rspec command and execution path. See [Commands](#Commands).
+- Smart selection of rspec command and execution path. See [Commands](#Smart selection of rspec command and execution path).
 - Automatically add failed examples to the quickfix list.
 - Quickly view last results with floating window.
 
