@@ -12,8 +12,8 @@ RSpec runner for Neovim. Written in Lua.
 
 ## Requirements
 
-- Neovim >= x.x.x (TODO)
-- RSpec >= x.x.x (TODO)
+- Neovim >= 0.7
+- RSpec >= 3.9.0
 
 ## Installation
 
