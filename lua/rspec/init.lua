@@ -17,7 +17,7 @@ local function save_last_command(command, exec_path)
 end
 
 ---@param options table
-function M.run_current_spec(options)
+function M.run_current_file(options)
   local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
 
   if not config.allowed_file_format(bufname) then
@@ -31,7 +31,7 @@ function M.run_current_spec(options)
   save_last_command(cmd_context.cmd, cmd_context.exec_path)
 end
 
-function M.run_last_spec()
+function M.rerun()
   local last_command = vim.g.last_command
 
   if last_command then
@@ -41,7 +41,7 @@ function M.run_last_spec()
   end
 end
 
-function M.show_last_spec_result()
+function M.show_last_result()
   viewer.open_last_spec_result_window()
 end
 
@@ -58,11 +58,11 @@ function M.setup(user_config)
   vim.api.nvim_set_hl(0, "RSpecFailed", { default = true, link = "DiffDelete" })
   vim.api.nvim_set_hl(0, "RSpecAborted", { default = true, link = "DiffDelete" })
 
-  vim.cmd("command! RunCurrentSpec lua require('rspec').run_current_spec()<CR>")
-  vim.cmd("command! RunNearestSpec lua require('rspec').run_current_spec({ only_nearest = true })<CR>")
-  vim.cmd("command! RunFailedSpec lua require('rspec').run_current_spec({ only_failures = true })<CR>")
-  vim.cmd("command! RunLastSpec lua require('rspec').run_last_spec()<CR>")
-  vim.cmd("command! ShowLastSpecResult lua require('rspec').show_last_spec_result()<CR>")
+  vim.cmd("command! RSpecCurrentFile lua require('rspec').run_current_file()<CR>")
+  vim.cmd("command! RSpecNearest lua require('rspec').run_current_file({ only_nearest = true })<CR>")
+  vim.cmd("command! RSpecOnlyFailures lua require('rspec').run_current_file({ only_failures = true })<CR>")
+  vim.cmd("command! RSpecRerun lua require('rspec').rerun()<CR>")
+  vim.cmd("command! RSpecShowLastResult lua require('rspec').show_last_result()<CR>")
 end
 
 return M
