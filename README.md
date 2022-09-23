@@ -2,6 +2,14 @@
 
 RSpec runner for Neovim. Written in Lua.
 
+When spec passed:
+
+<img src="https://user-images.githubusercontent.com/1377455/191960812-480d2ef8-33a2-498f-b5e9-06a0431547da.gif" alt="rspec_nvim_success_demo" width="80%"/>
+
+When spec failed:
+
+<img src="https://user-images.githubusercontent.com/1377455/191962794-7e8da6c5-06cf-4c4c-a4f0-98eecb056756.gif" alt="rspec_nvim_fail_demo" width="80%"/>
+
 ## Features
 
 - Asynchronous rspec execution. Does not block your editing
@@ -84,10 +92,6 @@ vim.keymap.set("n", "<leader>rF", ":RSpecOnlyFailures<CR>", { noremap = true, si
 vim.keymap.set("n", "<leader>rs", ":RSpecShowLastResult<CR>", { noremap = true, silent = true })
 ```
 
-## Asynchronous rspec execution
-
-rspec.nvim runs `rspec` asynchronously, so it doesn't block your editing.
-
 ## Smart selection of rspec command and execution path
 
 ### `rspec` command
@@ -110,6 +114,12 @@ If `bin/rspec` or `bundle exec rspec` is selected, the current directory is auto
 - `bundle exec rspec` : Go to the directory where `Gemfile` is located
 
 So you can run rspec from neovim even if your current directory is somewhere deep.
+
+## Asynchronous rspec execution
+
+rspec.nvim runs `rspec` asynchronously, so it doesn't block your editing.
+
+<img src="https://user-images.githubusercontent.com/1377455/191964429-4a2edc90-4c42-4d88-b444-c66f1ac47130.gif" alt="rspec_nvim_async_run" width="60%"/>
 
 ## quickfix integration
 
