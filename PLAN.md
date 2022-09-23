@@ -42,7 +42,7 @@
 ## Others
 
 - [x] stylua
-- [ ] Make REAMDE.md more attractive *
+- [x] Make REAMDE.md more attractive
 - [ ] Write docs
 - [ ] Write tests
 - [ ] Support checkhealth
