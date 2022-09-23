@@ -2,6 +2,8 @@
 
 RSpec runner for Neovim. Written in Lua.
 
+## Demo
+
 When spec passed:
 
 <img src="https://user-images.githubusercontent.com/1377455/191960812-480d2ef8-33a2-498f-b5e9-06a0431547da.gif" alt="rspec_nvim_success_demo" width="80%"/>
@@ -120,7 +122,3 @@ So you can run rspec from neovim even if your current directory is somewhere dee
 rspec.nvim runs `rspec` asynchronously, so it doesn't block your editing.
 
 <img src="https://user-images.githubusercontent.com/1377455/191964429-4a2edc90-4c42-4d88-b444-c66f1ac47130.gif" alt="rspec_nvim_async_run" width="60%"/>
-
-## quickfix integration
-
-If there are any failed tests, they are added to the quickfix list. So you can jump to failed tests quickly!
