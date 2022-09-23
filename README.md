@@ -17,13 +17,13 @@ RSpec runner for Neovim. Written in Lua.
 
 ## Installation
 
-### [packer.nvim](https://github.com/wbthomason/packer.nvim)
+[packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
 use { "mogulla3/rspec.nvim" }
 ```
 
-### [vim-plug](https://github.com/junegunn/vim-plug)
+[vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
 Plug "mogulla3/rspec.nvim"
