@@ -81,7 +81,7 @@ Then, you can run rspec and view the results through the following command.
 |`:RSpecCurrentFile`|Run rspec on the current file.|
 |`:RSpecNearest`|Run rspec on the example nearest to the cursor position.|
 |`:RSpecRerun`|Rerun rspec with the last command.|
-|`:RSpecOnlyFailures`|Run rspec on the current file with `--only-failures` option.|
+|`:RSpecOnlyFailures`|Run rspec on the current file with `--only-failures` option. [^1]|
 |`:RSpecShowLastResult`|Show last spec result on floating window.|
 
 Below is the recommended key mappings.
@@ -122,3 +122,5 @@ So you can run rspec from neovim even if your current directory is somewhere dee
 rspec.nvim runs `rspec` asynchronously, so it doesn't block your editing.
 
 <img src="https://user-images.githubusercontent.com/1377455/191964429-4a2edc90-4c42-4d88-b444-c66f1ac47130.gif" alt="rspec_nvim_async_run" width="60%"/>
+
+[^1]: Note that the `example_status_persistence_file_path` setting in `spec_helper.rb` must be enabled beforehand.
