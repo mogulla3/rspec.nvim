@@ -54,9 +54,9 @@ function M.setup(user_config)
   vim.g.last_command_stdout = nil
   vim.g.last_command_stderr = nil
 
-  vim.api.nvim_set_hl(0, "RSpecPassed", { default = true, link = "DiffAdd" })
-  vim.api.nvim_set_hl(0, "RSpecFailed", { default = true, link = "DiffDelete" })
-  vim.api.nvim_set_hl(0, "RSpecAborted", { default = true, link = "DiffDelete" })
+  vim.api.nvim_set_hl(0, "RSpecPassed", { bg = "#005f00", fg = "#87d700" })
+  vim.api.nvim_set_hl(0, "RSpecFailed", { bg = "#5f0000", fg = "#eb96c4" })
+  vim.api.nvim_set_hl(0, "RSpecAborted", { bg = "#5f0000", fg = "#eb96c4" })
 
   vim.cmd("command! RSpecCurrentFile lua require('rspec').run_current_file()<CR>")
   vim.cmd("command! RSpecNearest lua require('rspec').run_current_file({ only_nearest = true })<CR>")
