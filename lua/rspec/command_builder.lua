@@ -1,4 +1,6 @@
 local config = require("rspec.config")
+local default_formatter = "progress"
+local allowed_formatters = { "progress", "p", "documentation", "d" }
 
 local CommandBuilder = {}
 
@@ -56,6 +58,13 @@ local function determine_rspec_context()
   return { bin_cmd = bin_cmd, exec_path = exec_path }
 end
 
+--- Determine rspec formatter.
+--
+---@return string
+local function determine_rspec_formatter()
+  return vim.tbl_contains(allowed_formatters, config.formatter) and config.formatter or default_formatter
+end
+
 --- Build rspec command to be run
 ---
 ---@param bufname string # example: "/path/to/sample_spec.rb"
@@ -63,6 +72,7 @@ end
 ---@return { cmd: string[], exec_path: string }
 function CommandBuilder.build(bufname, options)
   local rspec_context = determine_rspec_context()
+  local formatter = determine_rspec_formatter()
 
   if options.only_nearest then
     local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
@@ -73,7 +83,7 @@ function CommandBuilder.build(bufname, options)
     bufname,
     "--force-color",
     "--format",
-    "progress",
+    formatter,
     "--format",
     "json",
     "--out",

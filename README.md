@@ -58,6 +58,10 @@ require('rspec').setup(
     return vim.endswith(filename, "_spec.rb")
   end,
 
+  -- RSpec formatter. "progress", "p", "documentation" and "d" can be specified.
+  -- If neither, use "progress".
+  formatter = "progress",
+
   -- Whether or not to focus on a window when `ShowLastSpecResult` command executed.
   focus_on_last_spec_result_window = true,
 
