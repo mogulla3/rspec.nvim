@@ -59,7 +59,7 @@ require('rspec').setup(
   end,
 
   -- RSpec formatter. "progress", "p", "documentation" and "d" can be specified.
-  -- If neither, use "progress".
+  -- If none of the above, use "progress".
   formatter = "progress",
 
   -- Whether or not to focus on a window when `ShowLastSpecResult` command executed.
