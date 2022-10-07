@@ -45,6 +45,10 @@ function M.show_last_result()
   viewer.open_last_spec_result_window()
 end
 
+function M.abort()
+  runner.abort()
+end
+
 ---@param user_config table
 function M.setup(user_config)
   user_config = user_config or {}
@@ -63,6 +67,7 @@ function M.setup(user_config)
   vim.cmd("command! RSpecOnlyFailures lua require('rspec').run_current_file({ only_failures = true })<CR>")
   vim.cmd("command! RSpecRerun lua require('rspec').rerun()<CR>")
   vim.cmd("command! RSpecShowLastResult lua require('rspec').show_last_result()<CR>")
+  vim.cmd("command! RSpecAbort lua require('rspec').abort()<CR>")
 end
 
 return M

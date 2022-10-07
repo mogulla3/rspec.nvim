@@ -1,5 +1,6 @@
 local config = require("rspec.config")
 
+local job_id = nil
 local rspec_running = false
 local Runner = {}
 
@@ -98,6 +99,20 @@ local function add_failed_examples_to_quickfix()
   end
 end
 
+function Runner.abort()
+  if not rspec_running then
+    vim.notify("[rspec.nvim] rspec is not running.", vim.log.levels.WARN)
+    return
+  end
+
+  local res = vim.fn.jobstop(job_id)
+  if res ~= 1 then
+    vim.notify("[rspec.nvim] failed to abort rspec.", vim.log.levels.ERROR)
+  end
+
+  return res
+end
+
 --- Run rspec command
 ---
 ---@param command string[]
@@ -114,7 +129,7 @@ function Runner.run_rspec(command, exec_path)
   rspec_running = true
   local progress_window = create_progress_window()
 
-  local job_id = vim.fn.jobstart(command, {
+  job_id = vim.fn.jobstart(command, {
     cwd = exec_path,
     stdout_buffered = true,
     stderr_buffered = true,

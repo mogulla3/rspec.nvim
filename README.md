@@ -87,6 +87,7 @@ Then, you can run rspec and view the results through the following command.
 |`:RSpecRerun`|Rerun rspec with the last command.|
 |`:RSpecOnlyFailures`|Run rspec on the current file with `--only-failures` option. [^1]|
 |`:RSpecShowLastResult`|Show last spec result on floating window.|
+|`:RSpecAbort`|Abort running rspec.|
 
 Below is the recommended key mappings.
 
