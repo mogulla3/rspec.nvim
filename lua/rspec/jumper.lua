@@ -1,5 +1,3 @@
--- local config = require("rspec.config")
-
 local Jumper = {}
 
 --- Trace back the parent directory from bufname and infer the root path of the project.
