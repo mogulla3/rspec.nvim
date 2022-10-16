@@ -44,16 +44,16 @@ end
 ---@return string[]
 local function infer_spec_paths(bufname, project_root)
   local results = {}
-  local relative_pathname = get_relative_pathname_from_project_root(bufname, project_root)
+  local relative_path = get_relative_pathname_from_project_root(bufname, project_root)
 
   -- TODO: Consider rspec-rails (e.g. request spec)
-  local spec_path = nil
-  if vim.startswith(relative_pathname, "lib/") then
-    spec_path = vim.fn.substitute(relative_pathname, [[^lib/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
-  elseif vim.startswith(relative_pathname, "app/") then
-    spec_path = vim.fn.substitute(relative_pathname, [[^app/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
+  local spec_path
+  if vim.startswith(relative_path, "lib/") then
+    spec_path = vim.fn.substitute(relative_path, [[^lib/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
+  elseif vim.startswith(relative_path, "app/") then
+    spec_path = vim.fn.substitute(relative_path, [[^app/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
   else
-    spec_path = vim.fn.substitute(relative_pathname, [[^\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
+    spec_path = vim.fn.substitute(relative_path, [[^\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
   end
 
   table.insert(results, project_root .. "/" .. spec_path)
@@ -69,8 +69,8 @@ end
 ---@return string[]
 local function infer_product_code_paths(bufname, project_root)
   local results = {}
-  local relative_pathname = get_relative_pathname_from_project_root(bufname, project_root)
-  local product_code_path = vim.fn.substitute(relative_pathname, [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], "\\1\\2.rb", "")
+  local relative_path = get_relative_pathname_from_project_root(bufname, project_root)
+  local product_code_path = vim.fn.substitute(relative_path, [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], "\\1\\2.rb", "")
 
   -- TODO: Consider rspec-rails (e.g. request spec)
   for _, basedir in pairs({ "/app/", "/lib/", "/" }) do
