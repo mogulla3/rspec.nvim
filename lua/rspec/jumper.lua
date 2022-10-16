@@ -5,15 +5,15 @@ local Jumper = {}
 --- Trace back the parent directory from bufname and infer the root path of the project.
 ---
 ---@param bufname string
----@return table|nil # example: { "path", "to", "project" }
-local function infer_project_root_path(bufname)
+---@return string|nil # example: "/path/to/project"
+local function infer_project_root(bufname)
   local paths = vim.fs.find({ ".rspec", "spec" }, { upward = true, path = bufname })
 
   if vim.tbl_isempty(paths) then
     return nil
   end
 
-  return vim.split(vim.fs.dirname(paths[1]), "/")
+  return vim.fs.dirname(paths[1])
 end
 
 --- Get a relative path to the project root for bufname
@@ -23,22 +23,23 @@ end
 ---   => { "lib", "foo", "sample.rb" }
 ---
 ---@param bufname string
----@return table|nil
-local function get_relative_path_from_project_root(bufname)
-  local project_root_path = infer_project_root_path(bufname)
-  if not project_root_path then
-    return nil
-  end
-
+---@param project_root string
+---@return string
+local function get_relative_pathname_from_project_root(bufname, project_root)
   local bufpath = vim.split(bufname, "/")
+  local project_root_path = vim.split(project_root, "/")
+  local relative_path = vim.list_slice(bufpath, #project_root_path + 1)
 
-  return vim.list_slice(bufpath, #project_root_path + 1)
+  return table.concat(relative_path, "/")
 end
 
+
+---@param bufname string
+---@return string[]
 local function infer_spec_paths(bufname)
   local results = {}
-  local relative_path = get_relative_path_from_project_root(bufname)
-  local relative_pathname = table.concat(relative_path, "/")
+  local project_root = infer_project_root(bufname)
+  local relative_pathname = get_relative_pathname_from_project_root(bufname, project_root)
 
   -- TODO: Consider rspec-rails (e.g. request spec)
   -- TODO: Consider hanami (apps dir)
@@ -50,7 +51,7 @@ local function infer_spec_paths(bufname)
     spec_path = vim.fn.substitute(relative_pathname, [[^\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
   end
 
-  table.insert(results, spec_path)
+  table.insert(results, project_root .. "/" .. spec_path)
 
   return results
 end
