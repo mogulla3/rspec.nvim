@@ -36,6 +36,9 @@ local function get_relative_pathname_from_project_root(bufname, project_root)
   return table.concat(relative_path, "/")
 end
 
+--- Infer spec paths from the current product code path.
+--- This function does not check the existence of the inferred file.
+---
 ---@param bufname string
 ---@param project_root string
 ---@return string[]
@@ -58,6 +61,9 @@ local function infer_spec_paths(bufname, project_root)
   return results
 end
 
+--- Infer product code paths from the current spec path.
+--- This function does not check the existence of the inferred file.
+---
 ---@param bufname string
 ---@param project_root string
 ---@return string[]
