@@ -2,27 +2,55 @@
 
 local Jumper = {}
 
-local function infer_spec_paths(bufname)
-  local project_root
-  for dir in vim.fs.parents(bufname) do
-    if vim.endswith(dir, "/lib") or vim.endswith(dir, "/app") then
-      project_root = vim.fs.dirname(dir)
-      break
-    end
+--- Trace back the parent directory from bufname and infer the root path of the project.
+---
+---@param bufname string
+---@return table|nil # example: { "path", "to", "project" }
+local function infer_project_root_path(bufname)
+  local paths = vim.fs.find({ ".rspec", "spec" }, { upward = true, path = bufname })
+
+  if vim.tbl_isempty(paths) then
+    return nil
+  end
+
+  return vim.split(vim.fs.dirname(paths[1]), "/")
+end
+
+--- Get a relative path to the project root for bufname
+--- example:
+---   project_root: /path/to/project
+---   bufname: /path/to/project/lib/foo/sample.rb
+---   => { "lib", "foo", "sample.rb" }
+---
+---@param bufname string
+---@return table|nil
+local function get_relative_path_from_project_root(bufname)
+  local project_root_path = infer_project_root_path(bufname)
+  if not project_root_path then
+    return nil
   end
 
   local bufpath = vim.split(bufname, "/")
-  local project_root_path = vim.split(project_root, "/")
-  local bufpath_from_project_root = vim.list_slice(bufpath, #project_root_path + 1)
 
-  -- TODO: Consider more patterns
-  bufpath_from_project_root[1] = "spec"
-  bufpath_from_project_root[#bufpath_from_project_root] = string.gsub(bufpath_from_project_root[#bufpath_from_project_root], "^(.*)%.rb$", "%1_spec.rb", 1)
+  return vim.list_slice(bufpath, #project_root_path + 1)
+end
 
+local function infer_spec_paths(bufname)
   local results = {}
+  local relative_path = get_relative_path_from_project_root(bufname)
+  local relative_pathname = table.concat(relative_path, "/")
 
-  local spec_path = vim.list_extend(project_root_path, bufpath_from_project_root)
-  table.insert(results, table.concat(spec_path, "/"))
+  -- TODO: Consider rspec-rails (e.g. request spec)
+  -- TODO: Consider hanami (apps dir)
+  if vim.startswith(relative_pathname, "lib/") then
+    spec_path = vim.fn.substitute(relative_pathname, [[^lib/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
+  elseif vim.startswith(relative_pathname, "app/") then
+    spec_path = vim.fn.substitute(relative_pathname, [[^app/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
+  else
+    spec_path = vim.fn.substitute(relative_pathname, [[^\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
+  end
+
+  table.insert(results, spec_path)
 
   return results
 end
@@ -69,6 +97,11 @@ function Jumper.jump()
     inferred_paths = infer_product_code_paths(bufname)
   else
     inferred_paths = infer_spec_paths(bufname)
+  end
+
+  if vim.tbl_isempty(inferred_paths) then
+    vim.notify("[rspec.nvim] RSpecJump cannot infer jump path", vim.log.levels.WARN)
+    return
   end
 
   for _, inferred_path in pairs(inferred_paths) do
