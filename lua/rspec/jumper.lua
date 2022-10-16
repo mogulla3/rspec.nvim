@@ -44,7 +44,6 @@ local function infer_spec_paths(bufname, project_root)
   local relative_pathname = get_relative_pathname_from_project_root(bufname, project_root)
 
   -- TODO: Consider rspec-rails (e.g. request spec)
-  -- TODO: Consider hanami (apps dir)
   local spec_path = nil
   if vim.startswith(relative_pathname, "lib/") then
     spec_path = vim.fn.substitute(relative_pathname, [[^lib/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
@@ -67,6 +66,7 @@ local function infer_product_code_paths(bufname, project_root)
   local relative_pathname = get_relative_pathname_from_project_root(bufname, project_root)
   local product_code_path = vim.fn.substitute(relative_pathname, [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], "\\1\\2.rb", "")
 
+  -- TODO: Consider rspec-rails (e.g. request spec)
   for _, basedir in pairs({ "/app/", "/lib/", "/" }) do
     if vim.fn.isdirectory(project_root .. basedir) == 1 then
       table.insert(results, project_root .. basedir .. product_code_path)
