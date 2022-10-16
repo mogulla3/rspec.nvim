@@ -35,14 +35,15 @@ end
 
 
 ---@param bufname string
+---@param project_root string
 ---@return string[]
-local function infer_spec_paths(bufname)
+local function infer_spec_paths(bufname, project_root)
   local results = {}
-  local project_root = infer_project_root(bufname)
   local relative_pathname = get_relative_pathname_from_project_root(bufname, project_root)
 
   -- TODO: Consider rspec-rails (e.g. request spec)
   -- TODO: Consider hanami (apps dir)
+  local spec_path = nil
   if vim.startswith(relative_pathname, "lib/") then
     spec_path = vim.fn.substitute(relative_pathname, [[^lib/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
   elseif vim.startswith(relative_pathname, "app/") then
@@ -56,29 +57,15 @@ local function infer_spec_paths(bufname)
   return results
 end
 
-local function infer_product_code_paths(bufname)
-  local project_root
-  for dir in vim.fs.parents(bufname) do
-    if vim.endswith(dir, "/spec") then
-      project_root = vim.fs.dirname(dir)
-      break
-    end
-  end
-
-  local buf_path = vim.split(bufname, "/")
-  local project_root_path = vim.split(project_root, "/")
-  local buf_path_from_project_root = vim.list_slice(buf_path, #project_root_path + 1)
-
+local function infer_product_code_paths(bufname, project_root)
   local results = {}
-  for _, path in pairs({ "lib", "app" }) do
-    local product_code_path = vim.deepcopy(buf_path_from_project_root)
+  local relative_pathname = get_relative_pathname_from_project_root(bufname, project_root)
+  local product_code_path = vim.fn.substitute(relative_pathname, [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], "\\1\\2.rb", "")
 
-    product_code_path[1] = path
-    product_code_path[#product_code_path] = string.gsub(product_code_path[#product_code_path], "^(.*)_spec.rb$", "%1.rb", 1)
-
-    local x = vim.list_extend(vim.deepcopy(project_root_path), product_code_path)
-
-    table.insert(results, table.concat(x, "/"))
+  for _, basedir in pairs({ "/app/", "/lib/", "/" }) do
+    if vim.fn.isdirectory(project_root .. basedir) == 1 then
+      table.insert(results, project_root .. basedir .. product_code_path)
+    end
   end
 
   return results
@@ -93,11 +80,17 @@ function Jumper.jump()
     return
   end
 
+  local project_root = infer_project_root(bufname)
+  if not project_root then
+    vim.notify("[rspec.nvim] RSpecJump cannot infer project root path", vim.log.levels.WARN)
+    return
+  end
+
   local inferred_paths = {}
   if vim.endswith(basename, "_spec.rb") then
-    inferred_paths = infer_product_code_paths(bufname)
+    inferred_paths = infer_product_code_paths(bufname, project_root)
   else
-    inferred_paths = infer_spec_paths(bufname)
+    inferred_paths = infer_spec_paths(bufname, project_root)
   end
 
   if vim.tbl_isempty(inferred_paths) then
