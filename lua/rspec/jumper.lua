@@ -70,12 +70,12 @@ end
 local function infer_product_code_paths(bufname, project_root)
   local results = {}
   local relative_path = get_relative_pathname_from_project_root(bufname, project_root)
-  local product_code_path = vim.fn.substitute(relative_path, [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], "\\1\\2.rb", "")
+  local relative_product_code_path = vim.fn.substitute(relative_path, [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], "\\1\\2.rb", "")
 
   -- TODO: Consider rspec-rails (e.g. request spec)
   for _, basedir in pairs({ "/app/", "/lib/", "/" }) do
     if vim.fn.isdirectory(project_root .. basedir) == 1 then
-      table.insert(results, project_root .. basedir .. product_code_path)
+      table.insert(results, project_root .. basedir .. relative_product_code_path)
     end
   end
 
