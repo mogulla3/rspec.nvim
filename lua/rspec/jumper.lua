@@ -4,8 +4,12 @@ local Jumper = {}
 
 --- Trace back the parent directory from bufname and infer the root path of the project.
 ---
+--- example:
+---   bufname: "/path/to/project/lib/foo/sample.rb"
+---   => "/path/to/project"
+---
 ---@param bufname string
----@return string|nil # example: "/path/to/project"
+---@return string|nil
 local function infer_project_root(bufname)
   local paths = vim.fs.find({ ".rspec", "spec" }, { upward = true, path = bufname })
 
@@ -17,10 +21,11 @@ local function infer_project_root(bufname)
 end
 
 --- Get a relative path to the project root for bufname
+---
 --- example:
----   project_root: /path/to/project
----   bufname: /path/to/project/lib/foo/sample.rb
----   => { "lib", "foo", "sample.rb" }
+---   bufname: "/path/to/project/lib/foo/sample.rb"
+---   project_root: "/path/to/project"
+---   => "lib/foo/sample.rb"
 ---
 ---@param bufname string
 ---@param project_root string
@@ -57,6 +62,9 @@ local function infer_spec_paths(bufname, project_root)
   return results
 end
 
+---@param bufname string
+---@param project_root string
+---@return string[]
 local function infer_product_code_paths(bufname, project_root)
   local results = {}
   local relative_pathname = get_relative_pathname_from_project_root(bufname, project_root)
