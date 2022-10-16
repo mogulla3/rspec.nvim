@@ -36,7 +36,6 @@ local function get_relative_pathname_from_project_root(bufname, project_root)
   return table.concat(relative_path, "/")
 end
 
-
 ---@param bufname string
 ---@param project_root string
 ---@return string[]
