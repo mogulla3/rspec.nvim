@@ -84,8 +84,8 @@ end
 
 --- Jump between specs and product code.
 ---
---- If the current buffer is a product code, it jumps to the related specs,
---- and if the current buffer is a specs, it jumps to the related product code.
+--- If the current buffer is a product code, it jumps to the related specs.
+--- If the current buffer is a specs, it jumps to the related product code.
 ---
 --- The file to jump to is inferred based on the general directory structure and general file naming conventions.
 --- - Example1. lib/foo/bar/baz.rb -> spec/foo/bar/baz_spec.rb
