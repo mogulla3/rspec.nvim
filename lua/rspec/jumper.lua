@@ -82,6 +82,17 @@ local function infer_product_code_paths(bufname, project_root)
   return results
 end
 
+--- Jump between specs and product code.
+---
+--- If the current buffer is a product code, it jumps to the related specs,
+--- and if the current buffer is a specs, it jumps to the related product code.
+---
+--- The file to jump to is inferred based on the general directory structure and general file naming conventions.
+--- - Example1. lib/foo/bar/baz.rb -> spec/foo/bar/baz_spec.rb
+--- - Example2. app/models/user.rb -> spec/models/user_spec.rb
+---
+--- The inferred jump destination files have a priority order.
+--- The files are searched in order of priority and the first file found is jumped to.
 function Jumper.jump()
   local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
   local basename = vim.fs.basename(bufname)
