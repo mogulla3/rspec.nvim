@@ -46,17 +46,32 @@ local function infer_spec_paths(bufname, project_root)
   local results = {}
   local relative_path = get_relative_pathname_from_project_root(bufname, project_root)
 
-  -- TODO: Consider rspec-rails (e.g. request spec)
-  local spec_path
+  local relative_spec_paths = {}
   if vim.startswith(relative_path, "lib/") then
-    spec_path = vim.fn.substitute(relative_path, [[^lib/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
+    table.insert(relative_spec_paths, vim.fn.substitute(relative_path, [[^lib/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", ""))
   elseif vim.startswith(relative_path, "app/") then
-    spec_path = vim.fn.substitute(relative_path, [[^app/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
+    local rails_default_pattern = [[^app/\(.*/\)\?\(.*\).rb$]]
+    local rails_view_pattern = [[^app/views/\(.*/\)\?\(.*\)$]]
+    local rails_controller_pattern = [[^app/controllers/\(.*/\)\?\(.*\)_controller.rb$]]
+
+    local dir_entries = vim.split(relative_path, "/")
+
+    -- TODO: Routing specs, Generator specs
+    if dir_entries[2] == "controllers" then
+      table.insert(relative_spec_paths, vim.fn.substitute(relative_path, rails_controller_pattern, "spec/requests/\\1\\2_spec.rb", ""))
+      table.insert(relative_spec_paths, vim.fn.substitute(relative_path, rails_default_pattern, "spec/\\1\\2_spec.rb", ""))
+    elseif dir_entries[2] == "views" then
+      table.insert(relative_spec_paths, vim.fn.substitute(relative_path, rails_view_pattern, "spec/views/\\1\\2_spec.rb", ""))
+    else
+      table.insert(relative_spec_paths, vim.fn.substitute(relative_path, rails_default_pattern, "spec/\\1\\2_spec.rb", ""))
+    end
   else
-    spec_path = vim.fn.substitute(relative_path, [[^\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "")
+    table.insert(relative_spec_paths, vim.fn.substitute(relative_path, [[^\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", ""))
   end
 
-  table.insert(results, project_root .. "/" .. spec_path)
+  for _, relative_spec_path in pairs(relative_spec_paths) do
+    table.insert(results, project_root .. "/" .. relative_spec_path)
+  end
 
   return results
 end
