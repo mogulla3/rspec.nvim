@@ -36,6 +36,41 @@ local function get_relative_pathname_from_project_root(bufname, project_root)
   return table.concat(relative_path, "/")
 end
 
+---@param relative_product_code_path string
+---@return string[]
+local function infer_rails_spec_paths(relative_product_code_path)
+  local results = {}
+  local patterns = {
+    default = {
+      [[^app/\(.*/\)\?\(.*\).rb$]],
+      "spec/\\1\\2_spec.rb",
+    },
+    controller = {
+      [[^app/controllers/\(.*/\)\?\(.*\)_controller.rb$]],
+      "spec/requests/\\1\\2_spec.rb",
+    },
+    view = {
+      [[^app/views/\(.*/\)\?\(.*\)$]],
+      "spec/views/\\1\\2_spec.rb",
+    },
+  }
+
+  local dir_entries = vim.split(relative_product_code_path, "/")
+
+  -- TODO: Routing specs, Generator specs
+  if dir_entries[2] == "controllers" then
+    -- Request specs and Controller specs
+    table.insert(results, vim.fn.substitute(relative_product_code_path, patterns.controller[1], patterns.controller[2], ""))
+    table.insert(results, vim.fn.substitute(relative_product_code_path, patterns.default[1], patterns.default[2], ""))
+  elseif dir_entries[2] == "views" then
+    table.insert(results, vim.fn.substitute(relative_product_code_path, patterns.view[1], patterns.view[2], ""))
+  else
+    table.insert(results, vim.fn.substitute(relative_product_code_path, patterns.default[1], patterns.default[2], ""))
+  end
+
+  return results
+end
+
 --- Infer spec paths from the current product code path.
 --- This function does not check the existence of the inferred file.
 ---
@@ -43,32 +78,18 @@ end
 ---@param project_root string
 ---@return string[]
 local function infer_spec_paths(bufname, project_root)
-  local results = {}
   local relative_path = get_relative_pathname_from_project_root(bufname, project_root)
 
   local relative_spec_paths = {}
   if vim.startswith(relative_path, "lib/") then
-    table.insert(relative_spec_paths, vim.fn.substitute(relative_path, [[^lib/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", ""))
+    relative_spec_paths = { vim.fn.substitute(relative_path, [[^lib/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "") }
   elseif vim.startswith(relative_path, "app/") then
-    local rails_default_pattern = [[^app/\(.*/\)\?\(.*\).rb$]]
-    local rails_view_pattern = [[^app/views/\(.*/\)\?\(.*\)$]]
-    local rails_controller_pattern = [[^app/controllers/\(.*/\)\?\(.*\)_controller.rb$]]
-
-    local dir_entries = vim.split(relative_path, "/")
-
-    -- TODO: Routing specs, Generator specs
-    if dir_entries[2] == "controllers" then
-      table.insert(relative_spec_paths, vim.fn.substitute(relative_path, rails_controller_pattern, "spec/requests/\\1\\2_spec.rb", ""))
-      table.insert(relative_spec_paths, vim.fn.substitute(relative_path, rails_default_pattern, "spec/\\1\\2_spec.rb", ""))
-    elseif dir_entries[2] == "views" then
-      table.insert(relative_spec_paths, vim.fn.substitute(relative_path, rails_view_pattern, "spec/views/\\1\\2_spec.rb", ""))
-    else
-      table.insert(relative_spec_paths, vim.fn.substitute(relative_path, rails_default_pattern, "spec/\\1\\2_spec.rb", ""))
-    end
+    relative_spec_paths = infer_rails_spec_paths(relative_path)
   else
-    table.insert(relative_spec_paths, vim.fn.substitute(relative_path, [[^\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", ""))
+    relative_spec_paths = { vim.fn.substitute(relative_path, [[^\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "") }
   end
 
+  local results = {}
   for _, relative_spec_path in pairs(relative_spec_paths) do
     table.insert(results, project_root .. "/" .. relative_spec_path)
   end
