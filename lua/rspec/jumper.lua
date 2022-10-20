@@ -39,7 +39,6 @@ end
 ---@param relative_product_code_path string
 ---@return string[]
 local function infer_rails_spec_paths(relative_product_code_path)
-  local results = {}
   local patterns = {
     default = {
       [[^app/\(.*/\)\?\(.*\).rb$]],
@@ -58,14 +57,17 @@ local function infer_rails_spec_paths(relative_product_code_path)
   local dir_entries = vim.split(relative_product_code_path, "/")
 
   -- TODO: Routing specs, Generator specs
+  local results = {}
   if dir_entries[2] == "controllers" then
     -- Request specs and Controller specs
-    table.insert(results, vim.fn.substitute(relative_product_code_path, patterns.controller[1], patterns.controller[2], ""))
-    table.insert(results, vim.fn.substitute(relative_product_code_path, patterns.default[1], patterns.default[2], ""))
+    results = {
+      vim.fn.substitute(relative_product_code_path, patterns.controller[1], patterns.controller[2], ""),
+      vim.fn.substitute(relative_product_code_path, patterns.default[1], patterns.default[2], ""),
+    }
   elseif dir_entries[2] == "views" then
-    table.insert(results, vim.fn.substitute(relative_product_code_path, patterns.view[1], patterns.view[2], ""))
+    results = { vim.fn.substitute(relative_product_code_path, patterns.view[1], patterns.view[2], "") }
   else
-    table.insert(results, vim.fn.substitute(relative_product_code_path, patterns.default[1], patterns.default[2], ""))
+    results = { vim.fn.substitute(relative_product_code_path, patterns.default[1], patterns.default[2], "") }
   end
 
   return results
