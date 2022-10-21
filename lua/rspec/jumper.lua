@@ -49,7 +49,6 @@ local to_product_code_patterns = {
     },
   },
 }
--- vim.pretty_print(vim.fn.substitute("spec/requests/users_spec.rb", [[^spec/requests/\(.*/\)\?\(.*\)_spec.rb"$]], "app/controllers/\\1\\2_controller.rb", ""))
 
 --- Trace back the parent directory from bufname and infer the root path of the project.
 ---
