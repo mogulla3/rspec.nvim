@@ -79,7 +79,7 @@ require('rspec').setup(
 
 ### Commands
 
-Then, you can run rspec and view the results through the following command.
+Then, you can use the following commands.
 
 |Command|Description|
 |:--|:--|
