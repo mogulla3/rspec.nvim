@@ -1,5 +1,30 @@
 local Jumper = {}
 
+local to_spec_patterns = {
+  simple = {
+    pattern = [[^\(.*/\)\?\(.*\).rb$]],
+    replace = "spec/\\1\\2_spec.rb",
+  },
+  gem = {
+    pattern = [[^lib/\(.*/\)\?\(.*\).rb$]],
+    replace = "spec/\\1\\2_spec.rb",
+  },
+  rails = {
+    default = {
+      pattern = [[^app/\(.*/\)\?\(.*\).rb$]],
+      replace = "spec/\\1\\2_spec.rb",
+    },
+    request = {
+      pattern = [[^app/controllers/\(.*/\)\?\(.*\)_controller.rb$]],
+      replace = "spec/requests/\\1\\2_spec.rb",
+    },
+    view = {
+      pattern = [[^app/views/\(.*/\)\?\(.*\)$]],
+      replace = "spec/views/\\1\\2_spec.rb",
+    },
+  },
+}
+
 --- Trace back the parent directory from bufname and infer the root path of the project.
 ---
 --- example:
@@ -46,34 +71,19 @@ end
 ---@param relative_product_code_path string
 ---@return string[]
 local function infer_rails_spec_paths(relative_product_code_path)
-  local trans_table = {
-    default = {
-      pattern = [[^app/\(.*/\)\?\(.*\).rb$]],
-      replace = "spec/\\1\\2_spec.rb",
-    },
-    request = {
-      pattern = [[^app/controllers/\(.*/\)\?\(.*\)_controller.rb$]],
-      replace = "spec/requests/\\1\\2_spec.rb",
-    },
-    view = {
-      pattern = [[^app/views/\(.*/\)\?\(.*\)$]],
-      replace = "spec/views/\\1\\2_spec.rb",
-    },
-  }
-
   local dir_entries = vim.split(relative_product_code_path, "/")
 
   -- TODO: Routing specs, Generator specs
   local results
   if dir_entries[2] == "controllers" then
     results = {
-      sub(relative_product_code_path, trans_table.request), -- Request specs
-      sub(relative_product_code_path, trans_table.default), -- Controller specs
+      sub(relative_product_code_path, to_spec_patterns.rails.request), -- Request specs
+      sub(relative_product_code_path, to_spec_patterns.rails.default), -- Controller specs
     }
   elseif dir_entries[2] == "views" then
-    results = { sub(relative_product_code_path, trans_table.view) }
+    results = { sub(relative_product_code_path, to_spec_patterns.rails.view) }
   else
-    results = { sub(relative_product_code_path, trans_table.default) }
+    results = { sub(relative_product_code_path, to_spec_patterns.rails.default) }
   end
 
   return results
@@ -90,11 +100,11 @@ local function infer_spec_paths(bufname, project_root)
 
   local relative_spec_paths = {}
   if vim.startswith(relative_path, "lib/") then
-    relative_spec_paths = { vim.fn.substitute(relative_path, [[^lib/\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "") }
+    relative_spec_paths = { sub(relative_path, to_spec_patterns.gem) }
   elseif vim.startswith(relative_path, "app/") then
     relative_spec_paths = infer_rails_spec_paths(relative_path)
   else
-    relative_spec_paths = { vim.fn.substitute(relative_path, [[^\(.*/\)\?\(.*\).rb$]], "spec/\\1\\2_spec.rb", "") }
+    relative_spec_paths = { sub(relative_path, to_spec_patterns.simple) }
   end
 
   local results = {}
