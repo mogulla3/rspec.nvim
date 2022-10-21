@@ -25,6 +25,32 @@ local to_spec_patterns = {
   },
 }
 
+local to_product_code_patterns = {
+  simple = {
+    pattern = [[^spec/\(.*/\)\?\(.*\)_spec.rb$]],
+    replace = "\\1\\2.rb",
+  },
+  gem = {
+    pattern = [[^spec/\(.*/\)\?\(.*\)_spec.rb$]],
+    replace = "lib/\\1\\2.rb",
+  },
+  rails = {
+    default = {
+      pattern = [[^spec/\(.*/\)\?\(.*\)_spec.rb$]],
+      replace = "app/\\1\\2.rb",
+    },
+    controller = {
+      pattern = [[^spec/requests/\(.*/\)\?\(.*\)_spec.rb$]],
+      replace = "app/controllers/\\1\\2_controller.rb",
+    },
+    view = {
+      pattern = [[^spec/views/\(.*/\)\?\(.*\)_spec.rb$]],
+      replace = "app/views/\\1\\2",
+    },
+  },
+}
+-- vim.pretty_print(vim.fn.substitute("spec/requests/users_spec.rb", [[^spec/requests/\(.*/\)\?\(.*\)_spec.rb"$]], "app/controllers/\\1\\2_controller.rb", ""))
+
 --- Trace back the parent directory from bufname and infer the root path of the project.
 ---
 --- example:
@@ -89,6 +115,24 @@ local function infer_rails_spec_paths(relative_product_code_path)
   return results
 end
 
+---@param relative_spec_path string
+---@return string[]
+local function infer_rails_product_code_paths(relative_spec_path)
+  local dir_entries = vim.split(relative_spec_path, "/")
+
+  -- TODO: Routing specs, Generator specs
+  local results
+  if dir_entries[2] == "requests" then
+    results = { sub(relative_spec_path, to_product_code_patterns.rails.controller) }
+  elseif dir_entries[2] == "views" then
+    results = { sub(relative_spec_path, to_product_code_patterns.rails.view) }
+  else
+    results = { sub(relative_spec_path, to_product_code_patterns.rails.default) }
+  end
+
+  return results
+end
+
 --- Infer spec paths from the current product code path.
 --- This function does not check the existence of the inferred file.
 ---
@@ -122,15 +166,22 @@ end
 ---@param project_root string
 ---@return string[]
 local function infer_product_code_paths(bufname, project_root)
-  local results = {}
   local relative_path = get_relative_pathname_from_project_root(bufname, project_root)
-  local relative_product_code_path = vim.fn.substitute(relative_path, [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], "\\1\\2.rb", "")
 
-  -- TODO: Consider rspec-rails (e.g. request spec)
-  for _, basedir in pairs({ "/app/", "/lib/", "/" }) do
-    if vim.fn.isdirectory(project_root .. basedir) == 1 then
-      table.insert(results, project_root .. basedir .. relative_product_code_path)
-    end
+  local relative_product_code_paths = {}
+  if vim.fn.isdirectory(project_root .. "/app") then
+    vim.list_extend(relative_product_code_paths, infer_rails_product_code_paths(relative_path))
+  end
+
+  if vim.fn.isdirectory(project_root .. "/lib") then
+    table.insert(relative_product_code_paths, sub(relative_path, to_product_code_patterns.gem))
+  end
+
+  table.insert(relative_product_code_paths, sub(relative_path, to_product_code_patterns.simple))
+
+  local results = {}
+  for _, relative_product_code_path in pairs(relative_product_code_paths) do
+    table.insert(results, project_root .. "/" .. relative_product_code_path)
   end
 
   return results
