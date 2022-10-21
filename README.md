@@ -19,10 +19,11 @@ When spec failed:
 - Smart selection of rspec command and execution path
 - Automatically add failed examples to the quickfix list
 - Quickly view last results with floating window
+- Jump from product code file to spec file (or vice versa)
 
 ## Requirements
 
-- Neovim >= 0.7
+- Neovim >= 0.8.0
 - RSpec >= 3.9.0
 
 ## Installation
