@@ -36,38 +36,44 @@ local function get_relative_pathname_from_project_root(bufname, project_root)
   return table.concat(relative_path, "/")
 end
 
+---@param subject string
+---@param params { pattern: string, replace: string }
+---@return string
+local function sub(subject, params)
+  return vim.fn.substitute(subject, params.pattern, params.replace, "")
+end
+
 ---@param relative_product_code_path string
 ---@return string[]
 local function infer_rails_spec_paths(relative_product_code_path)
-  local patterns = {
+  local trans_table = {
     default = {
-      [[^app/\(.*/\)\?\(.*\).rb$]],
-      "spec/\\1\\2_spec.rb",
+      pattern = [[^app/\(.*/\)\?\(.*\).rb$]],
+      replace = "spec/\\1\\2_spec.rb",
     },
-    controller = {
-      [[^app/controllers/\(.*/\)\?\(.*\)_controller.rb$]],
-      "spec/requests/\\1\\2_spec.rb",
+    request = {
+      pattern = [[^app/controllers/\(.*/\)\?\(.*\)_controller.rb$]],
+      replace = "spec/requests/\\1\\2_spec.rb",
     },
     view = {
-      [[^app/views/\(.*/\)\?\(.*\)$]],
-      "spec/views/\\1\\2_spec.rb",
+      pattern = [[^app/views/\(.*/\)\?\(.*\)$]],
+      replace = "spec/views/\\1\\2_spec.rb",
     },
   }
 
   local dir_entries = vim.split(relative_product_code_path, "/")
 
   -- TODO: Routing specs, Generator specs
-  local results = {}
+  local results
   if dir_entries[2] == "controllers" then
-    -- Request specs and Controller specs
     results = {
-      vim.fn.substitute(relative_product_code_path, patterns.controller[1], patterns.controller[2], ""),
-      vim.fn.substitute(relative_product_code_path, patterns.default[1], patterns.default[2], ""),
+      sub(relative_product_code_path, trans_table.request), -- Request specs
+      sub(relative_product_code_path, trans_table.default), -- Controller specs
     }
   elseif dir_entries[2] == "views" then
-    results = { vim.fn.substitute(relative_product_code_path, patterns.view[1], patterns.view[2], "") }
+    results = { sub(relative_product_code_path, trans_table.view) }
   else
-    results = { vim.fn.substitute(relative_product_code_path, patterns.default[1], patterns.default[2], "") }
+    results = { sub(relative_product_code_path, trans_table.default) }
   end
 
   return results
