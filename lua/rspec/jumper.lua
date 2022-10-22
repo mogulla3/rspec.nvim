@@ -199,9 +199,7 @@ end
 --- The files are searched in order of priority and the first file found is jumped to.
 function Jumper.jump()
   local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
-  local basename = vim.fs.basename(bufname)
-
-  if not vim.endswith(basename, ".rb") then
+  if not vim.endswith(bufname, ".rb") then
     vim.notify("[rspec.nvim] RSpecJump can only be run on `.rb` files", vim.log.levels.ERROR)
     return
   end
@@ -213,7 +211,7 @@ function Jumper.jump()
   end
 
   local inferred_paths = {}
-  if vim.endswith(basename, "_spec.rb") then
+  if vim.endswith(bufname, "_spec.rb") then
     inferred_paths = infer_product_code_paths(bufname, project_root)
   else
     inferred_paths = infer_spec_paths(bufname, project_root)
