@@ -170,11 +170,11 @@ local function infer_product_code_paths(bufname, project_root)
   local relative_path = get_relative_pathname_from_project_root(bufname, project_root)
   local relative_product_code_paths = {}
 
-  if vim.fn.isdirectory(project_root .. "/app") then
+  if vim.fn.isdirectory(project_root .. "/app") == 1 then
     vim.list_extend(relative_product_code_paths, infer_rails_product_code_paths(relative_path))
   end
 
-  if vim.fn.isdirectory(project_root .. "/lib") then
+  if vim.fn.isdirectory(project_root .. "/lib") == 1 then
     table.insert(relative_product_code_paths, sub(relative_path, to_product_code_patterns.gem))
   end
 
