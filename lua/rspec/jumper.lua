@@ -202,13 +202,13 @@ function Jumper.jump()
   local basename = vim.fs.basename(bufname)
 
   if not vim.endswith(basename, ".rb") then
-    vim.notify("[rspec.nvim] RSpecJump can only be run on `.rb` files", vim.log.levels.WARN)
+    vim.notify("[rspec.nvim] RSpecJump can only be run on `.rb` files", vim.log.levels.ERROR)
     return
   end
 
   local project_root = infer_project_root(bufname)
   if not project_root then
-    vim.notify("[rspec.nvim] RSpecJump cannot infer project root path", vim.log.levels.WARN)
+    vim.notify("[rspec.nvim] RSpecJump cannot infer project root path", vim.log.levels.ERROR)
     return
   end
 
@@ -220,7 +220,7 @@ function Jumper.jump()
   end
 
   if vim.tbl_isempty(inferred_paths) then
-    vim.notify("[rspec.nvim] RSpecJump cannot infer jump path", vim.log.levels.WARN)
+    vim.notify("[rspec.nvim] RSpecJump cannot infer jump path", vim.log.levels.ERROR)
     return
   end
 
