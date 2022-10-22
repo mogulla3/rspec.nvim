@@ -14,7 +14,7 @@ local to_spec_patterns = {
       pattern = [[^app/\(.*/\)\?\(.*\).rb$]],
       replace = "spec/\\1\\2_spec.rb",
     },
-    request = {
+    controller = {
       pattern = [[^app/controllers/\(.*/\)\?\(.*\)_controller.rb$]],
       replace = "spec/requests/\\1\\2_spec.rb",
     },
@@ -102,7 +102,7 @@ local function infer_rails_spec_paths(relative_product_code_path)
   local results
   if dir_entries[2] == "controllers" then
     results = {
-      sub(relative_product_code_path, to_spec_patterns.rails.request), -- Request specs
+      sub(relative_product_code_path, to_spec_patterns.rails.controller), -- Request specs
       sub(relative_product_code_path, to_spec_patterns.rails.default), -- Controller specs
     }
   elseif dir_entries[2] == "views" then
