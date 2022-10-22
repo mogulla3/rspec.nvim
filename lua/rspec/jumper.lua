@@ -222,14 +222,18 @@ function Jumper.jump()
     return
   end
 
+  local is_file_found = false
   for _, inferred_path in pairs(inferred_paths) do
     if vim.fn.filereadable(inferred_path) == 1 then
       vim.api.nvim_command("edit " .. inferred_path)
+      is_file_found = true
       break
     end
   end
 
-  vim.notify("[rspec.nvim] Not found all of the following files:\n" .. table.concat(inferred_paths, "\n"), vim.log.levels.ERROR)
+  if not is_file_found then
+    vim.notify("[rspec.nvim] Not found all of the following files:\n" .. table.concat(inferred_paths, "\n"), vim.log.levels.ERROR)
+  end
 end
 
 return Jumper
