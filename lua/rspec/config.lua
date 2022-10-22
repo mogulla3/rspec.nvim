@@ -22,6 +22,10 @@ local default_config = {
 
   -- File path to save the last failed spec result.
   last_failed_result_path = vim.fn.stdpath("data") .. "/" .. "rspec_last_failed_result",
+
+  -- Command to open the file to jump to.
+  -- Examples of other alternatives: vsplit, split, tabedit
+  jump_command = "edit",
 }
 
 local Config = {}

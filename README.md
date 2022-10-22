@@ -19,10 +19,11 @@ When spec failed:
 - Smart selection of rspec command and execution path
 - Automatically add failed examples to the quickfix list
 - Quickly view last results with floating window
+- Jump from product code file to spec file (or vice versa)
 
 ## Requirements
 
-- Neovim >= 0.7
+- Neovim >= 0.8.0
 - RSpec >= 3.9.0
 
 ## Installation
@@ -73,12 +74,16 @@ require('rspec').setup(
 
   -- File path to save the last failed spec result.
   last_failed_result_path = vim.fn.stdpath("data") .. "/" .. "rspec_last_failed_result",
+
+  -- Command to open the file to jump to.
+  -- Examples of other alternatives: vsplit, split, tabedit
+  jump_command = "edit",
 )
 ```
 
 ### Commands
 
-Then, you can run rspec and view the results through the following command.
+Then, you can use the following commands.
 
 |Command|Description|
 |:--|:--|
@@ -88,6 +93,7 @@ Then, you can run rspec and view the results through the following command.
 |`:RSpecOnlyFailures`|Run rspec on the current file with `--only-failures` option. [^1]|
 |`:RSpecShowLastResult`|Show last spec result on floating window.|
 |`:RSpecAbort`|Abort running rspec.|
+|`:RSpecJump`|Jump from product code file to spec file (or vice versa).|
 
 Below is the recommended key mappings.
 
@@ -97,6 +103,12 @@ vim.keymap.set("n", "<leader>rf", ":RSpecCurrentFile<CR>", { noremap = true, sil
 vim.keymap.set("n", "<leader>rr", ":RSpecRerun<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>rF", ":RSpecOnlyFailures<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>rs", ":RSpecShowLastResult<CR>", { noremap = true, silent = true })
+```
+
+And below is the recommended user command.
+
+```lua
+vim.api.nvim_create_user_command("RJ", "RSpecJump", {})
 ```
 
 ## Smart selection of rspec command and execution path
