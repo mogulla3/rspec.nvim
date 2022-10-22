@@ -141,11 +141,11 @@ end
 local function infer_spec_paths(bufname, project_root)
   local relative_path = get_relative_pathname_from_project_root(bufname, project_root)
 
-  local relative_spec_paths = {}
-  if vim.startswith(relative_path, "lib/") then
-    relative_spec_paths = { sub(relative_path, to_spec_patterns.gem) }
-  elseif vim.startswith(relative_path, "app/") then
+  local relative_spec_paths
+  if vim.startswith(relative_path, "app/") then
     relative_spec_paths = infer_rails_spec_paths(relative_path)
+  elseif vim.startswith(relative_path, "lib/") then
+    relative_spec_paths = { sub(relative_path, to_spec_patterns.gem) }
   else
     relative_spec_paths = { sub(relative_path, to_spec_patterns.simple) }
   end
@@ -166,8 +166,8 @@ end
 ---@return string[]
 local function infer_product_code_paths(bufname, project_root)
   local relative_path = get_relative_pathname_from_project_root(bufname, project_root)
-
   local relative_product_code_paths = {}
+
   if vim.fn.isdirectory(project_root .. "/app") then
     vim.list_extend(relative_product_code_paths, infer_rails_product_code_paths(relative_path))
   end
