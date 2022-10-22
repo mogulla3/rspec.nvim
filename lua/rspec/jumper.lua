@@ -234,7 +234,10 @@ function Jumper.jump()
   end
 
   if not is_file_found then
-    vim.notify("[rspec.nvim] Not found all of the following files:\n" .. table.concat(inferred_paths, "\n"), vim.log.levels.ERROR)
+    vim.notify(
+      "[rspec.nvim] Not found all of the following files:\n" .. table.concat(inferred_paths, "\n"),
+      vim.log.levels.ERROR
+    )
   end
 end
 
