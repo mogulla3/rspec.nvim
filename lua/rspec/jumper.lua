@@ -1,3 +1,5 @@
+local config = require("rspec.config")
+
 local Jumper = {}
 
 local to_spec_patterns = {
@@ -225,7 +227,7 @@ function Jumper.jump()
   local is_file_found = false
   for _, inferred_path in pairs(inferred_paths) do
     if vim.fn.filereadable(inferred_path) == 1 then
-      vim.api.nvim_command("edit " .. inferred_path)
+      vim.api.nvim_command(config.jump_command .. " " .. inferred_path)
       is_file_found = true
       break
     end
