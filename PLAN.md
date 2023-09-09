@@ -50,5 +50,5 @@
 
 ## Ideas
 
-- [ ] Go to the spec file corresponding to the open buffer (and vice versa)
-- [ ] If the spec file corresponding to the open buffer does not exist, create a spec file.
+- [x] Go to the spec file corresponding to the open buffer (and vice versa)
+- [x] If the spec file corresponding to the open buffer does not exist, create a spec file.
