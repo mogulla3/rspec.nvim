@@ -93,7 +93,7 @@ Then, you can use the following commands.
 |`:RSpecOnlyFailures`|Run rspec on the current file with `--only-failures` option. [^1]|
 |`:RSpecShowLastResult`|Show last spec result on floating window.|
 |`:RSpecAbort`|Abort running rspec.|
-|`:RSpecJump`|Jump from product code file to spec file (or vice versa).|
+|`:RSpecJump`, `:RSpecJump!`|Jump from product code file to spec file (or vice versa). With `!`, if the file to jump to does not exist, attempt to create and then jump to it.|
 
 Below is the recommended key mappings.
 
@@ -108,7 +108,10 @@ vim.keymap.set("n", "<leader>rs", ":RSpecShowLastResult<CR>", { noremap = true, 
 And below is the recommended user command.
 
 ```lua
-vim.api.nvim_create_user_command("RJ", "RSpecJump", {})
+-- This is a shortcut command for the RSpecJump and RSpecJump!.
+vim.api.nvim_create_user_command('RJ', function(args)
+  rspec.jump({ force = args.bang })
+end, { bang = true })
 ```
 
 ## Smart selection of rspec command and execution path

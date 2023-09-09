@@ -188,6 +188,25 @@ local function infer_product_code_paths(bufname, project_root)
   return results
 end
 
+--- Jump to the path passed in the argument
+---
+---@param path string
+local function jump_to_file(path)
+  vim.api.nvim_command(config.jump_command .. " " .. path)
+end
+
+--- Jump to the path passed in the argument
+--- If the directory does not exist, create it.
+---
+---@param path string
+local function force_jump_to_file(path)
+  if vim.fn.filereadable(path) ~= 1 then
+    vim.fn.mkdir(vim.fs.dirname(path), "p")
+  end
+
+  jump_to_file(path)
+end
+
 --- Jump between specs and product code.
 ---
 --- If the current buffer is a product code, it jumps to the related specs.
@@ -199,7 +218,12 @@ end
 ---
 --- The inferred jump destination files have a priority order.
 --- The files are searched in order of priority and the first file found is jumped to.
-function Jumper.jump()
+---
+--- If the force option is enabled, create the inferred file if it does not exist.
+---
+---@param options table
+function Jumper.jump(options)
+  local opts = options or {}
   local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
   if not vim.endswith(bufname, ".rb") then
     vim.notify("[rspec.nvim] RSpecJump can only be run on `.rb` files", vim.log.levels.ERROR)
@@ -224,20 +248,47 @@ function Jumper.jump()
     return
   end
 
-  local is_file_found = false
-  for _, inferred_path in pairs(inferred_paths) do
-    if vim.fn.filereadable(inferred_path) == 1 then
-      vim.api.nvim_command(config.jump_command .. " " .. inferred_path)
-      is_file_found = true
-      break
-    end
-  end
+  if opts.force then
+    local selected_path
 
-  if not is_file_found then
-    vim.notify(
-      "[rspec.nvim] Not found all of the following files:\n" .. table.concat(inferred_paths, "\n"),
-      vim.log.levels.ERROR
-    )
+    if vim.tbl_count(inferred_paths) > 1 then
+      local inputlist_items = { "Choose the path you want to jump." }
+      for i, inferred_path in pairs(inferred_paths) do
+        table.insert(inputlist_items, i .. ": " .. inferred_path)
+      end
+
+      local selected_num = vim.fn.inputlist(inputlist_items)
+      selected_path = inferred_paths[selected_num]
+
+      -- If the user presses `Escape` or `q`, 0 is passed.
+      if selected_num == 0 then
+        return
+      elseif not selected_path then
+        vim.notify("[rspec.nvim] Invalid number '" .. selected_num .. "' is selected", vim.log.levels.ERROR)
+        return
+      end
+    else
+      selected_path = inferred_paths[1]
+    end
+
+    force_jump_to_file(selected_path)
+  else
+    local is_file_found = false
+
+    for _, inferred_path in pairs(inferred_paths) do
+      if vim.fn.filereadable(inferred_path) == 1 then
+        jump_to_file(inferred_path)
+        is_file_found = true
+        break
+      end
+    end
+
+    if not is_file_found then
+      vim.notify(
+        "[rspec.nvim] Not found all of the following files:\n" .. table.concat(inferred_paths, "\n"),
+        vim.log.levels.ERROR
+      )
+    end
   end
 end
 
