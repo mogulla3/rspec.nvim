@@ -108,6 +108,8 @@ vim.keymap.set("n", "<leader>rs", ":RSpecShowLastResult<CR>", { noremap = true, 
 And below is the recommended user command.
 
 ```lua
+local rspec = require("rspec")
+
 -- This is a shortcut command for the RSpecJump and RSpecJump!.
 vim.api.nvim_create_user_command('RJ', function(args)
   rspec.jump({ force = args.bang })
