@@ -73,7 +73,7 @@ function M.setup(user_config)
   vim.cmd("command! RSpecRerun lua require('rspec').rerun()<CR>")
   vim.cmd("command! RSpecShowLastResult lua require('rspec').show_last_result()<CR>")
   vim.cmd("command! RSpecAbort lua require('rspec').abort()<CR>")
-  vim.api.nvim_create_user_command('RSpecJump', function(args)
+  vim.api.nvim_create_user_command("RSpecJump", function(args)
     jumper.jump({ force = args.bang })
   end, { bang = true })
 end
