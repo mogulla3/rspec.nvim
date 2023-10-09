@@ -125,23 +125,23 @@ end
 ---@param project_root string
 ---@return string[]
 local function infer_spec_paths(bufname, project_root)
-  local relative_path = get_relative_pathname_from_project_root(bufname, project_root)
-
+  local relative_current_product_code_path = get_relative_pathname_from_project_root(bufname, project_root)
   local relative_spec_paths
-  if vim.startswith(relative_path, "app/") then
-    relative_spec_paths = infer_rails_spec_paths(relative_path)
+
+  if vim.startswith(relative_current_product_code_path, "app/") then
+    relative_spec_paths = infer_rails_spec_paths(relative_current_product_code_path)
   else
     local pattern = [[^\(]] .. table.concat(get_ignored_dirs(), [[/\|]]) .. [[/\)\?\(.*/\)\?\(.*\).rb$]]
     local replace = "spec/\\2\\3_spec.rb"
-    relative_spec_paths = { sub(relative_path, { pattern = pattern, replace = replace }) }
+    relative_spec_paths = { sub(relative_current_product_code_path, { pattern = pattern, replace = replace }) }
   end
 
-  local results = {}
+  local absolute_spec_paths = {}
   for _, relative_spec_path in pairs(relative_spec_paths) do
-    table.insert(results, project_root .. "/" .. relative_spec_path)
+    table.insert(absolute_spec_paths, project_root .. "/" .. relative_spec_path)
   end
 
-  return results
+  return absolute_spec_paths
 end
 
 --- Infer product code paths from the current spec path.
@@ -151,25 +151,25 @@ end
 ---@param project_root string
 ---@return string[]
 local function infer_product_code_paths(bufname, project_root)
-  local relative_path = get_relative_pathname_from_project_root(bufname, project_root)
+  local relative_current_spec_path = get_relative_pathname_from_project_root(bufname, project_root)
   local relative_product_code_paths = {}
 
   if vim.fn.isdirectory(project_root .. "/app") == 1 then
-    vim.list_extend(relative_product_code_paths, infer_rails_product_code_paths(relative_path))
+    vim.list_extend(relative_product_code_paths, infer_rails_product_code_paths(relative_current_spec_path))
   end
 
   for _, ignored_dir in ipairs(get_ignored_dirs()) do
-    table.insert(relative_product_code_paths, sub(relative_path, { pattern = [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], replace = ignored_dir .. "/" .. "\\1\\2.rb" }))
+    table.insert(relative_product_code_paths, sub(relative_current_spec_path, { pattern = [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], replace = ignored_dir .. "/" .. "\\1\\2.rb" }))
   end
 
-  table.insert(relative_product_code_paths, sub(relative_path, { pattern = [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], replace = "\\1\\2.rb" }))
+  table.insert(relative_product_code_paths, sub(relative_current_spec_path, { pattern = [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], replace = "\\1\\2.rb" }))
 
-  local results = {}
+  local absolute_product_code_paths = {}
   for _, relative_product_code_path in pairs(relative_product_code_paths) do
-    table.insert(results, project_root .. "/" .. relative_product_code_path)
+    table.insert(absolute_product_code_paths, project_root .. "/" .. relative_product_code_path)
   end
 
-  return results
+  return absolute_product_code_paths
 end
 
 --- Jump to the path passed in the argument
