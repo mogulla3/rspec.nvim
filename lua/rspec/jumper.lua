@@ -2,55 +2,39 @@ local config = require("rspec.config")
 
 local Jumper = {}
 
-local to_spec_patterns = {
-  simple = {
-    pattern = [[^\(.*/\)\?\(.*\).rb$]],
+local rails_spec_patterns = {
+  default = {
+    pattern = [[^app/\(.*/\)\?\(.*\).rb$]],
     replace = "spec/\\1\\2_spec.rb",
   },
-  gem = {
-    pattern = [[^lib/\(.*/\)\?\(.*\).rb$]],
-    replace = "spec/\\1\\2_spec.rb",
+  controller = {
+    pattern = [[^app/controllers/\(.*/\)\?\(.*\)_controller.rb$]],
+    replace = "spec/requests/\\1\\2_spec.rb",
   },
-  rails = {
-    default = {
-      pattern = [[^app/\(.*/\)\?\(.*\).rb$]],
-      replace = "spec/\\1\\2_spec.rb",
-    },
-    controller = {
-      pattern = [[^app/controllers/\(.*/\)\?\(.*\)_controller.rb$]],
-      replace = "spec/requests/\\1\\2_spec.rb",
-    },
-    view = {
-      pattern = [[^app/views/\(.*/\)\?\(.*\)$]],
-      replace = "spec/views/\\1\\2_spec.rb",
-    },
+  view = {
+    pattern = [[^app/views/\(.*/\)\?\(.*\)$]],
+    replace = "spec/views/\\1\\2_spec.rb",
   },
 }
 
-local to_product_code_patterns = {
-  simple = {
+local rails_product_code_patterns = {
+  default = {
     pattern = [[^spec/\(.*/\)\?\(.*\)_spec.rb$]],
-    replace = "\\1\\2.rb",
+    replace = "app/\\1\\2.rb",
   },
-  gem = {
-    pattern = [[^spec/\(.*/\)\?\(.*\)_spec.rb$]],
-    replace = "lib/\\1\\2.rb",
+  controller = {
+    pattern = [[^spec/requests/\(.*/\)\?\(.*\)_spec.rb$]],
+    replace = "app/controllers/\\1\\2_controller.rb",
   },
-  rails = {
-    default = {
-      pattern = [[^spec/\(.*/\)\?\(.*\)_spec.rb$]],
-      replace = "app/\\1\\2.rb",
-    },
-    controller = {
-      pattern = [[^spec/requests/\(.*/\)\?\(.*\)_spec.rb$]],
-      replace = "app/controllers/\\1\\2_controller.rb",
-    },
-    view = {
-      pattern = [[^spec/views/\(.*/\)\?\(.*\)_spec.rb$]],
-      replace = "app/views/\\1\\2",
-    },
+  view = {
+    pattern = [[^spec/views/\(.*/\)\?\(.*\)_spec.rb$]],
+    replace = "app/views/\\1\\2",
   },
 }
+
+local function get_ignored_dirs()
+  return vim.list_extend({ "lib" }, config.ignored_dirs_on_jump)
+end
 
 --- Trace back the parent directory from bufname and infer the root path of the project.
 ---
@@ -104,13 +88,13 @@ local function infer_rails_spec_paths(relative_product_code_path)
   local results
   if dir_entries[2] == "controllers" then
     results = {
-      sub(relative_product_code_path, to_spec_patterns.rails.controller), -- Request specs
-      sub(relative_product_code_path, to_spec_patterns.rails.default), -- Controller specs
+      sub(relative_product_code_path, rails_spec_patterns.controller), -- Request specs
+      sub(relative_product_code_path, rails_spec_patterns.default), -- Controller specs
     }
   elseif dir_entries[2] == "views" then
-    results = { sub(relative_product_code_path, to_spec_patterns.rails.view) }
+    results = { sub(relative_product_code_path, rails_spec_patterns.view) }
   else
-    results = { sub(relative_product_code_path, to_spec_patterns.rails.default) }
+    results = { sub(relative_product_code_path, rails_spec_patterns.default) }
   end
 
   return results
@@ -124,11 +108,11 @@ local function infer_rails_product_code_paths(relative_spec_path)
   -- TODO: Routing specs, Generator specs
   local results
   if dir_entries[2] == "requests" then
-    results = { sub(relative_spec_path, to_product_code_patterns.rails.controller) }
+    results = { sub(relative_spec_path, rails_product_code_patterns.controller) }
   elseif dir_entries[2] == "views" then
-    results = { sub(relative_spec_path, to_product_code_patterns.rails.view) }
+    results = { sub(relative_spec_path, rails_product_code_patterns.view) }
   else
-    results = { sub(relative_spec_path, to_product_code_patterns.rails.default) }
+    results = { sub(relative_spec_path, rails_product_code_patterns.default) }
   end
 
   return results
@@ -146,10 +130,10 @@ local function infer_spec_paths(bufname, project_root)
   local relative_spec_paths
   if vim.startswith(relative_path, "app/") then
     relative_spec_paths = infer_rails_spec_paths(relative_path)
-  elseif vim.startswith(relative_path, "lib/") then
-    relative_spec_paths = { sub(relative_path, to_spec_patterns.gem) }
   else
-    relative_spec_paths = { sub(relative_path, to_spec_patterns.simple) }
+    local pattern = [[^\(]] .. table.concat(get_ignored_dirs(), [[/\|]]) .. [[/\)\?\(.*/\)\?\(.*\).rb$]]
+    local replace = "spec/\\2\\3_spec.rb"
+    relative_spec_paths = { sub(relative_path, { pattern = pattern, replace = replace }) }
   end
 
   local results = {}
@@ -174,11 +158,11 @@ local function infer_product_code_paths(bufname, project_root)
     vim.list_extend(relative_product_code_paths, infer_rails_product_code_paths(relative_path))
   end
 
-  if vim.fn.isdirectory(project_root .. "/lib") == 1 then
-    table.insert(relative_product_code_paths, sub(relative_path, to_product_code_patterns.gem))
+  for _, ignored_dir in ipairs(get_ignored_dirs()) do
+    table.insert(relative_product_code_paths, sub(relative_path, { pattern = [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], replace = ignored_dir .. "/" .. "\\1\\2.rb" }))
   end
 
-  table.insert(relative_product_code_paths, sub(relative_path, to_product_code_patterns.simple))
+  table.insert(relative_product_code_paths, sub(relative_path, { pattern = [[^spec/\(.*/\)\?\(.*\)_spec.rb$]], replace = "\\1\\2.rb" }))
 
   local results = {}
   for _, relative_product_code_path in pairs(relative_product_code_paths) do
