@@ -26,6 +26,10 @@ local default_config = {
   -- Command to open the file to jump to.
   -- Examples of other alternatives: vsplit, split, tabedit
   jump_command = "edit",
+
+  -- Directories to ignore when jumping with the RSpecJump command
+  -- For example, if you want to jump from `custom/foo/bar.rb` to `spec/foo/bar_spec.rb`, specify "custom".
+  ignored_dirs_on_jump = {},
 }
 
 local Config = {}
