@@ -28,7 +28,7 @@ local default_config = {
   jump_command = "edit",
 
   -- Directories to ignore when jumping with the RSpecJump command
-  -- For example, if you want to jump from `custom/foo/bar.rb` to `spec/foo/bar_spec.rb`, specify "custom".
+  -- For example, if you want to jump from `src/foo/bar.rb` to `spec/foo/bar_spec.rb`, specify "src".
   ignored_dirs_on_jump = {},
 }
 
