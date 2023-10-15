@@ -63,7 +63,7 @@ require('rspec').setup(
   -- If none of the above, use "progress".
   formatter = "progress",
 
-  -- Whether or not to focus on a window when `RSpecShowLastResult` command executed.
+  -- Whether or not to focus on a window when `ShowLastSpecResult` command executed.
   focus_on_last_spec_result_window = true,
 
   -- Whether or not to open the quickfix window when the spec fails.
@@ -78,6 +78,19 @@ require('rspec').setup(
   -- Command to open the file to jump to.
   -- Examples of other alternatives: vsplit, split, tabedit
   jump_command = "edit",
+
+  -- Directories to ignore when jumping with the RSpecJump command
+  --
+  -- For example, suppose you want to jump from "src/foo/bar.rb" to "spec/foo/bar_spec.rb".
+  --
+  -- However, rspec.nvim would by default try to find "spec/src/foo/bar_spec.rb" and return an error saying it cannot be found.
+  -- In this case, you would want to treat the "src/" directory as equivalent to the "app/" in Rails or the "lib/" directory in a gem.
+  --
+  -- So you can specify the following for the ignored_dirs_on_jump option, which will give you the expected jumps.
+  -- ```
+  -- ignored_dirs_on_jump = { "src" }
+  -- ```
+  ignored_dirs_on_jump = {},
 )
 ```
 
