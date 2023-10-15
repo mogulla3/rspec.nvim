@@ -63,7 +63,7 @@ require('rspec').setup(
   -- If none of the above, use "progress".
   formatter = "progress",
 
-  -- Whether or not to focus on a window when `RSpecShowLastResult` command executed.
+  -- Whether or not to focus on a window when `ShowLastSpecResult` command executed.
   focus_on_last_spec_result_window = true,
 
   -- Whether or not to open the quickfix window when the spec fails.
