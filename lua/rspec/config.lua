@@ -28,7 +28,16 @@ local default_config = {
   jump_command = "edit",
 
   -- Directories to ignore when jumping with the RSpecJump command
-  -- For example, if you want to jump from `src/foo/bar.rb` to `spec/foo/bar_spec.rb`, specify "src".
+  --
+  -- For example, suppose you want to jump from "src/foo/bar.rb" to "spec/foo/bar_spec.rb".
+  --
+  -- However, rspec.nvim would by default try to find "spec/src/foo/bar_spec.rb" and return an error saying it cannot be found.
+  -- In this case, you would want to treat the "src/" directory as equivalent to the "app/" in Rails or the "lib/" directory in a gem.
+  --
+  -- So you can specify the following for the ignored_dirs_on_jump option, which will give you the expected jumps.
+  -- ```
+  -- ignored_dirs_on_jump = { "src" }
+  -- ```
   ignored_dirs_on_jump = {},
 }
 
