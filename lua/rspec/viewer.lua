@@ -40,8 +40,8 @@ local function create_window()
   }
 
   local win_id = vim.api.nvim_open_win(bufnr, config.focus_on_last_spec_result_window, opts)
-  vim.api.nvim_win_set_option(win_id, "wrap", true)
-  vim.api.nvim_win_set_option(win_id, "winhl", "Normal:ErrorFloat")
+  vim.api.nvim_set_option_value("wrap", true, { win = win_id })
+  vim.api.nvim_set_option_value("winhl", "Normal:ErrorFloat", { win = win_id })
   vim.api.nvim_win_set_buf(win_id, bufnr)
 
   return { win_id = win_id, bufnr = bufnr }
