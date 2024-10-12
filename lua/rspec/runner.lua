@@ -26,7 +26,7 @@ local function create_progress_window()
 
   local win_id = vim.api.nvim_open_win(bufnr, false, opts)
   vim.api.nvim_win_set_buf(win_id, bufnr)
-  vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, { message })
+  vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, { message })
   vim.api.nvim_set_option_value("winhl", "Normal:ErrorFloat", { win = win_id })
 
   return { win_id = win_id, bufnr = bufnr }
