@@ -66,6 +66,8 @@ function M.setup(user_config)
   vim.api.nvim_set_hl(0, "RSpecPassed", { bg = "#005f00", fg = "#87d700" })
   vim.api.nvim_set_hl(0, "RSpecFailed", { bg = "#5f0000", fg = "#eb96c4" })
   vim.api.nvim_set_hl(0, "RSpecAborted", { bg = "#5f0000", fg = "#eb96c4" })
+  vim.api.nvim_set_hl(0, "RSpecRunning", { bg = "#000000", fg = "#AFC1E9", italic = true })
+  vim.api.nvim_set_hl(0, "RSpecRunningBorder", { bg = "#000000", fg = "#AFC1E9" })
 
   vim.cmd("command! RSpecCurrentFile lua require('rspec').run_current_file()<CR>")
   vim.cmd("command! RSpecNearest lua require('rspec').run_current_file({ only_nearest = true })<CR>")

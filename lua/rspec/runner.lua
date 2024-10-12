@@ -8,7 +8,7 @@ local Runner = {}
 ---
 ---@return { win_id: number, bufnr: number }
 local function create_progress_window()
-  local message = "Running RSpec..."
+  local message = " Running RSpec... "
   local bufnr = vim.api.nvim_create_buf(false, true)
 
   -- Render floating window on right bottom
@@ -26,8 +26,8 @@ local function create_progress_window()
 
   local win_id = vim.api.nvim_open_win(bufnr, false, opts)
   vim.api.nvim_win_set_buf(win_id, bufnr)
-  vim.api.nvim_buf_set_lines(bufnr, 0, 0, true, { message })
-  vim.api.nvim_set_option_value("winhl", "Normal:ErrorFloat", { win = win_id })
+  vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, { message })
+  vim.api.nvim_set_option_value("winhl", "NormalNC:RSpecRunning,FloatBorder:RSpecRunningBorder", { win = win_id })
 
   return { win_id = win_id, bufnr = bufnr }
 end
