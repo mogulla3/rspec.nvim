@@ -8,7 +8,7 @@ local Runner = {}
 ---
 ---@return { win_id: number, bufnr: number }
 local function create_progress_window()
-  local message = "Running RSpec..."
+  local message = " Running RSpec... "
   local bufnr = vim.api.nvim_create_buf(false, true)
 
   -- Render floating window on right bottom
